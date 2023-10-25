@@ -1,7 +1,17 @@
+# -*- coding: utf-8 -*-
+#
+# @description      curses Screen class, used mostly for dealing with the library
+#
+# @author           Andrea Benini
+# @date             2023-10-29
+# @license          GNU Affero General Public License v3.0
+# @see              Nothing fancy here, just a basic object wrapper around curses lib
+#
 import curses
 import subprocess
 
 import forklift
+
 
 class Screen(object):
     def __init__(self):
