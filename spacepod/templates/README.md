@@ -1,0 +1,1 @@
+### SpacePod template files
