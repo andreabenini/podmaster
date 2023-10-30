@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# @description      Container and Pod creator from outer space
+# @author           Andrea (Ben) Benini
+# @date             2023/08/12
+# @see              Simple utility for creating containers from scratch with templates
+#
+# pyright: reportMissingImports=false
+# pyright: reportMissingModuleSource=false
+import os
+import re
+import sys
+import jinja2
+import argparse
+
+class spacePod():
+    def __init__(self, pathProgram=None, pathCurrent=None, output=None, verbose=False):
+        self.__PAD = 20
+        self.__verbose = verbose
+        self.__pathProgramTemplate = pathProgram + os.sep + 'templates'
+        self.__pathCurrent = pathCurrent
+        self.__variablesInit(variables='')
+        if not output:
+            self.__output = None                # stdout
+        else:
+            if self.__verbose:
+                print(f"{'Output file':{self.__PAD}}  {output}", file=sys.stderr)
+            self.__output = open(output, 'w+')  # to this file
+        if self.__verbose:
+            print(f"{'Directory Template':{self.__PAD}}  {self.__pathCurrent}", file=sys.stderr)
+            print(f"{'Program Template':{self.__PAD}}  {self.__pathProgramTemplate}", file=sys.stderr)
+
+    # Template list from [__pathProgramTemplate], [__pathCurrent]
+    def templateList(self):
+        print(f"\n{'Dir':{self.__PAD}} {'Template':{self.__PAD}} {'Description'}\n{'-'*self.__PAD*3}------")
+        self.__templateList(list=[self.__pathCurrent, self.__pathProgramTemplate], padLen=self.__PAD)
+        print(f"{'-'*self.__PAD*3}------\n")
+    def __templateList(self, list=None, padLen=0):
+        if len(list)>0:
+            print(f"{list[0]}")
+            for filename in os.listdir(list[0]):
+                if filename.endswith('.tpl'):
+                    description = ''
+                    with open(list[0]+os.sep+filename, 'r') as file:
+                        line = file.readline().strip()
+                        if line.startswith('#'):
+                            description = line[1:].strip()
+                    print(f"{' ':{padLen}} {filename:{padLen}} {description}")
+            self.__templateList(list=list[1:], padLen=padLen)
+    def __templateValidate(self, template=None, path=[]):
+        if not template:
+            print("Error: --template option is required, see Help (-h) usage")
+            sys.exit(1)
+        if len(path)==0:
+            print(f"Error: template '{template}' not found in path, see 'templatelist' command")
+            sys.exit(1)
+        templatePath = path[0] + (os.sep if path[0]!='' else '') + template
+        if os.path.exists(templatePath):
+            return templatePath
+        return self.__templateValidate(template=template, path=path[1:])
+
+    def __variablesInit(self, variables=''):
+        self.__vars = {}
+        if variables=='':
+            return
+        if self.__verbose:
+            print(f"Input Variables", file=sys.stderr)
+        variablesSplit = re.split(r'(?<!"),', variables)
+        for var in variablesSplit:
+            varKeyValue = var.split('=')
+            varKey = varKeyValue[0]
+            varValue = varKeyValue[1]
+            if varValue.startswith('"') and varValue.endswith('"'):
+                varValue = varValue[1:-1]
+            if self.__verbose:
+                print(f"{' ':{self.__PAD}}  {varKey} = {varValue}", file=sys.stderr)
+            self.__vars[varKey] = varValue
+
+    def __generateInput(self, varName=None, prompt=None, defaultValue=None):
+        if varName in self.__vars:
+            return self.__vars[varName]
+        inputValue = input(f"{prompt} [{defaultValue}]: ")
+        self.__vars[varName] = inputValue if inputValue!='' else defaultValue
+        return self.__vars[varName]
+    def __generateBaseName(self, variable=None):
+        if variable in self.__vars:
+            baseName, _ = os.path.splitext(self.__vars[variable])
+        else:
+            baseName = ''
+        return os.path.basename(baseName)
+    def __generateVar(self, varName=None, default=''):
+        if varName not in self.__vars:
+            self.__vars[varName] = default
+        return self.__vars[varName]
+    
+    def generate(self, templateFile=None, variables=''):
+        self.__variablesInit(variables=variables)
+        templateFile = self.__templateValidate(template=templateFile, path=["", self.__pathCurrent, self.__pathProgramTemplate])
+        if self.__verbose:
+            print(f"{'Using template file':{self.__PAD}}  {templateFile}\n", file=sys.stderr)
+        # Converting input with proper template
+        environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(templateFile)))
+        template = environment.get_template(os.path.basename(templateFile))
+        content = template.render(input=self.__generateInput, basename=self.__generateBaseName, var=self.__generateVar)
+        # Output
+        if self.__output:
+            self.__output.write(content+"\n")
+        else:
+            print(content)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='SpacePod: container creator from outer space')
+    parser.add_argument("command", choices=['help', 'doc', 'templatelist', 'create'], help='The operation to perform')
+    parser.add_argument('-t', '--template',  dest='template',  default=None,  help="Use template (local dir lookup first, template dir later)")
+    parser.add_argument('-o', '--output',    dest='output',    default=None,  help="Output to filename (default: stdout)")
+    parser.add_argument('-V', '--variables', dest='variables', default='',    help="Pass variables to the script, example: 'var1=value1,var2=\"val,2\",var3=val3'")
+    parser.add_argument('-v', '--verbose',   dest='verbose',   default=False, action='store_true', help="Verbose output, useful for debugging")
+    argument = parser.parse_args()
+    pod = spacePod(pathProgram=os.path.dirname(os.path.realpath(__file__)), pathCurrent=os.path.realpath('.'), verbose=argument.verbose, output=argument.output)
+    if argument.command == 'help':
+        parser.print_help()
+        sys.exit(1)
+    elif argument.command == 'doc':
+        print("\nDocumentation      https://github.com/andreabenini/linux.tips/blob/master/containers%20-%20kubernetes/docker-podman/spacepod/README.md")
+        print("Sample Templates   https://github.com/andreabenini/linux.tips/blob/master/containers%20-%20kubernetes/docker-podman/spacepod/templates\n")
+        sys.exit(1)
+    elif argument.command == 'templatelist':
+        pod.templateList()
+    elif argument.command == 'create':
+        pod.generate(templateFile=argument.template, variables=argument.variables)
