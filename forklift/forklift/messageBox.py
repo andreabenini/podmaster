@@ -5,7 +5,7 @@
 # @author           Andrea Benini
 # @date             2023-10-29
 # @license          GNU Affero General Public License v3.0
-# @see              Basic messageBox classed based on curses for simple message output
+# @see              Basic messageBox class based on curses for simple message output
 #
 import math
 import curses
@@ -13,7 +13,7 @@ import curses
 import forklift
 
 
-class messageBox(object):
+class MessageBox(object):
     def __init__(self, title=None, message='', footer=None, width=None, height=None, x=None, y=None, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK), keypress=True):
         # Calculating: x, y, width, height, size
         if not width:
