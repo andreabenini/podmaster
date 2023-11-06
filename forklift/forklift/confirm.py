@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# @description      confirm style (YES|NO) class for displaying messages to the user
+# @description      confirm (YES|NO) class for displaying messages to the user
 #
 # @author           Andrea Benini
-# @date             2023-11-06
+# @date             2023-11-05
 # @license          GNU Affero General Public License v3.0
-# @see              Basic Confirm class based on curses for displaying yes/no messagebox windows
+# @see              Basic Confirm class based on curses for displaying yes/no messageboxes
 #
 import math
 import curses
@@ -61,12 +61,13 @@ class Confirm(object):
             except curses.error: pass
             yline += 1
         winMessage.refresh()
-        # Buttons        
         buttonsLen = 0
         for button in messageButtons:
             buttonsLen += len(button)+3
+        
         winButtons = curses.newwin(1, buttonsLen-1, y+height-2, x+width-buttonsLen)
         winButtons.bkgd(curses.color_pair(widgetColor))
+        # print(height, buttonsLen, 10, x+width-buttonsLen+10)
         while True:
             buttonSel = pos = 0
             for button in messageButtons:

@@ -1,2 +1,2 @@
-# Required modules
+# Required modules and dependencies
 - pyyaml
