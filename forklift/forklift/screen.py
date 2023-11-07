@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# @description      screen class for screen curses management
+# @description      Screen class for screen curses management
 #
 # @author           Andrea Benini
 # @date             2023-11-06

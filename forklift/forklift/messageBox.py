@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# @description      messageBox class for displaying messages to the user
+# @description      MessageBox class for displaying messages to the user
 #
 # @author           Andrea Benini
 # @date             2023-10-29
