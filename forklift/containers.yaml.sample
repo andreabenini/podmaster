@@ -1,0 +1,3 @@
+your first entry: podman run --hostname hostname.local --name containername -v ./config/:/root/osc -it myimagename /bin/bash
+another configuration: podman run -it another_image /bin/bash
+container build sample: podman run -d -p 8000:80 -it myhttpimage /bin/bash

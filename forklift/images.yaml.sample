@@ -1,0 +1,2 @@
+packagebuilder: podman build -t packagebuilder .
+testbuilder: scriptThatGeneratesImage.sh $CONTAINER_NAME
