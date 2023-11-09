@@ -144,12 +144,13 @@ class ForkliftSystem(object):
         menu.append((' Start - Attach', 'start'))
         menu.append((' Stop', 'stop'))
         menu.append((' Kill', 'kill'))
+        menu.append((' Logs', 'log'))
         menu.append((' Rename', 'rename'))
         menu.append((' Remove', 'remove'))
         (_, ID, Name, Status) = containerID
         menuAction = Menu(screen=self.__screen.screen, colors=(curses.COLOR_WHITE, curses.COLOR_BLUE))
         menuAction.items = menu
-        selected = menuAction.Display(caption=f"[{Name}]", footer=f'Status: {Status}', itemWidth=30, lines=7, X=20, Y=8)
+        selected = menuAction.Display(caption=f"[{Name}]", footer=f'Status: {Status}', itemWidth=30, lines=8, X=20, Y=8)
         if selected==-1:
             return
         (_, action) = menu[selected]
@@ -162,6 +163,9 @@ class ForkliftSystem(object):
         elif action=='kill':
             message = str(self.__container.Kill(containerID=ID))
             title = f'Killing in the name of [{Name}]'
+        elif action=='log':
+            self.__screen.Exec(f"{self.__container.platform} logs {ID} | less")
+            return
         elif action=='rename':
             nameNew = InputBox(defaultValue=Name, title=f'New name for "{Name}"', size=100, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=10)
             if nameNew.value:
