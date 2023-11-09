@@ -31,6 +31,7 @@ don't want to be annoyed by usual and repetitive commands
 That's what this utility is about.
 
 #### Rolling demo overview
-[![Screenshot overview](contrib/rollingdemo.mp4)](contrib/rollingdemo.mp4)
+https://github.com/andreabenini/podmaster/assets/9632086/25064afe-f242-4686-9e5a-071f78af4590
+
 
 ---
