@@ -15,9 +15,8 @@ import os
 import sys
 try:
     import yaml
-    import json
     import curses
-    import subprocess
+    import argparse
 
     from forklift.menu       import Menu
     from forklift.screen     import Screen
@@ -295,6 +294,9 @@ class ForkliftSystem(object):
 
 
 if __name__ == "__main__":
-    App = ForkliftSystem(path=os.path.dirname(os.path.realpath(__file__)))
+    parser = argparse.ArgumentParser(description='Forklift: friendly utility for dealing with containers', epilog=f" ", formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('-p', '--path',  dest='path',  default=os.path.dirname(os.path.realpath(__file__)),  help=f"System and user configuration files path (default: {os.path.dirname(os.path.realpath(__file__))})")
+    argument = parser.parse_args()
+    App = ForkliftSystem(path=argument.path)
     App.Run()
     App.Close()

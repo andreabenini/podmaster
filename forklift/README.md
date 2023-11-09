@@ -50,6 +50,28 @@ https://github.com/andreabenini/podmaster/assets/9632086/25064afe-f242-4686-9e5a
 - Build images and container from within the utility, ContainerCommander like style
 
 
+## Usage:
+```sh
+# program help
+~$ forklift --help
+usage: forklift [-h] [-p PATH]
+
+Forklift: friendly utility for dealing with containers
+
+options:
+  -h, --help            show this help message and exit
+  -p PATH, --path PATH  System and user configuration files path (default: /where/this/utility/is/stored)
+
+# As simple as:
+~$ forklift.py
+# Or add '--path' argument to specify where yaml config files are stored
+#     default is set on program current location (see --help for details)
+~$ forklift.py --path $HOME/container_configs
+```
+- Arrows keys to navigate
+- \<enter> to confirm, \<esc> to abort commands
+
+
 ## Contributing
 Feel free to raise issues, pull requests and suggest improvements. It's a ready
 made utility but it can be enhanced and new features might be added with your
