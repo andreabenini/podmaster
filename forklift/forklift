@@ -18,12 +18,12 @@ try:
     import curses
     import argparse
 
-    from forklift.menu       import Menu
-    from forklift.screen     import Screen
-    from forklift.confirm    import Confirm
-    from forklift.inputBox   import InputBox
-    from forklift.container  import Container
-    from forklift.messageBox import MessageBox
+    from forkliftlib.menu       import Menu
+    from forkliftlib.screen     import Screen
+    from forkliftlib.confirm    import Confirm
+    from forkliftlib.inputBox   import InputBox
+    from forkliftlib.container  import Container
+    from forkliftlib.messageBox import MessageBox
 except Exception as E:
     print(f"Error while importing modules:\n{str(E)}\nAborting program\n\n")
     sys.exit(1)

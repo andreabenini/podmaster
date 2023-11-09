@@ -9,15 +9,15 @@
 #
 import math
 import curses
+
 # NOTE: Textbox curses class has a ~10Y bug:
 #       - Submitted an issue here: https://github.com/python/cpython/issues/111795
 #       - Provided a patch here:   https://github.com/python/cpython/pull/111796
 # I'll wait them until it's merged in the main branch even if it might take years
 # I'm now providing a modified (and working) version of it until then
 # from   curses.textpad import Textbox      # Curses textpad object bug in standard library detected. USE THIS ONCE PATCHED
-from   forklift.textpad import Textbox      # This lib fixes the standard. REMOVE [textpad.py] WHEN FIXED IN THE CURSES LIB
-
-import forklift
+from   forkliftlib.textpad import Textbox      # This lib fixes the standard. REMOVE [textpad.py] WHEN FIXED IN THE CURSES LIB
+import forkliftlib
 
 class InputBox(object):
     def __init__(self, defaultValue="", title=None, footer=None, footer2=None, size=200, width=None, height=None, x=None, y=None, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK)):
@@ -38,8 +38,8 @@ class InputBox(object):
         if not y:
             y = math.floor((lines-height)/2) + 1
         # Box color setup
-        widgetColor = forklift.UUID
-        forklift.UUID += 1
+        widgetColor = forkliftlib.UUID
+        forkliftlib.UUID += 1
         (colorForeground, colorBackground) = colors
         curses.start_color()
         curses.init_pair(widgetColor, colorForeground, colorBackground)

@@ -10,7 +10,7 @@
 import math
 import curses
 
-import forklift
+import forkliftlib
 
 
 class MessageBox(object):
@@ -31,8 +31,8 @@ class MessageBox(object):
             lines = curses.LINES - 2
             y = math.floor((lines-height)/2) + 1
         # Box color setup
-        widgetColor = forklift.UUID
-        forklift.UUID += 1
+        widgetColor = forkliftlib.UUID
+        forkliftlib.UUID += 1
         (colorForeground, colorBackground) = colors
         curses.start_color()
         curses.init_pair(widgetColor, colorForeground, colorBackground)

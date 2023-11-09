@@ -13,8 +13,8 @@ import yaml
 import json
 import subprocess
 
-from forklift.menu import Menu
-from forklift.inputBox import InputBox
+from forkliftlib.menu     import Menu
+from forkliftlib.inputBox import InputBox
 
 
 class Container(object):

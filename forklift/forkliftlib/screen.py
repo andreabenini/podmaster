@@ -10,7 +10,7 @@
 import curses
 import subprocess
 
-import forklift
+import forkliftlib
 
 class Screen(object):
     def __init__(self):
@@ -59,6 +59,6 @@ class Screen(object):
         self.Refresh()
 
     def newUUID(self):
-        UUID = forklift.UUID
-        forklift.UUID += 1
+        UUID = forkliftlib.UUID
+        forkliftlib.UUID += 1
         return UUID

@@ -9,15 +9,15 @@
 #
 import curses
 
-import forklift
+import forkliftlib
 
 
 class Menu(object):
     def __init__(self, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK), screen=None):
         self.__screen = screen
         del self.items
-        self.__UUID = forklift.UUID
-        forklift.UUID += 1
+        self.__UUID = forkliftlib.UUID
+        forkliftlib.UUID += 1
         curses.start_color()
         (colorForeground, colorBackground) = colors
         curses.init_pair(self.__UUID, colorForeground, colorBackground)
