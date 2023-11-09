@@ -34,4 +34,23 @@ That's what this utility is about.
 https://github.com/andreabenini/podmaster/assets/9632086/25064afe-f242-4686-9e5a-071f78af4590
 
 
----
+## Features 
+- Basic container images management: create (manually/script), rename, delete
+- Container management: create, run, attach, stop, kill, rename, log
+- Running locally or on a remote SSH connection, text only, no GUI required
+- Curses based GUI utility with just a few keys: cursor arrows, enter, escape
+- **NOT** related to Kubernetes, orchestrators or pods, just "simple" containers.  
+    Targeted to personal workstations and workflows, no matter if local or on a
+    remote ssh shell
+- python-curses is the only requirement (but yaml), no extra deps, no curses library
+    widgets. Everything builtin and self contained in the project
+- _.yaml_ based project configuration and user setup
+- Container engine independent, tested on: **_docker, podman_**. LXD might be the next
+    if someone requires it
+- Build images and container from within the utility, ContainerCommander like style
+
+
+## Contributing
+Feel free to raise issues, pull requests and suggest improvements. It's a ready
+made utility but it can be enhanced and new features might be added with your
+contribution.
