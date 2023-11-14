@@ -1,0 +1,31 @@
+# Forklift Change Log
+All notable changes to this project will be documented in this file.
+ 
+
+## [0.2.0] - 2023-11-07
+#### Added
+- Versioning and documentation, license AGPL
+- Project initially released on github
+- Created as a python package and published on Python official repository.
+    "`pip install forklift`" to have it installed
+- container `logs` command added
+#### Changed
+- Configuration path as command line parameter
+#### To Do
+- python unittest on a curses widget, how to ?
+---
+
+
+## [0.1.0] - 2023-11-06
+Officially started as a registered project for
+[SUSE Hack Week '23](https://hackweek.opensuse.org/)
+#### Added
+- Registered to HackWeek '23 as:
+[Forklift - Text based GUI utility for dealing with containers](https://hackweek.opensuse.org/23/projects/forklift-text-based-gui-utility-for-dealing-with-containers)
+- Built from scratch on top of python+curses+yaml, no other deps
+#### Changed
+- curses as a base, widget built from scratch for this project only
+#### Fixed
+- Fixing curses bug on Textbox() class, reported to python standard library
+    - cpython official library [issue](https://github.com/python/cpython/issues/111795)
+    - cpython library [patch provided](https://github.com/python/cpython/pull/111796)

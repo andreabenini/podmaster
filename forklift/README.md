@@ -63,13 +63,41 @@ options:
   -p PATH, --path PATH  System and user configuration files path (default: /where/this/utility/is/stored)
 
 # As simple as:
-~$ forklift.py
+~$ forklift
 # Or add '--path' argument to specify where yaml config files are stored
 #     default is set on program current location (see --help for details)
-~$ forklift.py --path $HOME/container_configs
+~$ forklift --path $HOME/container_configs
 ```
 - Arrows keys to navigate
 - \<enter> to confirm, \<esc> to abort commands
+
+
+## Installation and configuration
+
+- Requirements: _'python3'_, _'yaml'_ and _'python curses'_ are required, nothing else. There's no need for a VirtualEnv
+- Installation methods:
+    - From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
+    this site. Clone the repo or download sources from there
+    - from **_pip_**:
+        ```sh
+        pip install forklift
+        ```
+- Edit the configuration file `system.yaml` and change it accordingly to your favorite
+    container management utility, default: **podman**, change it to **docker** if needed
+- **_[optional]_** Create your `containers.yaml` and `images.yaml` files to have working templates
+    while using the utility. You can create and edit them externally from the shell or 
+    automatically while using the program. These two samples are provided as a reference:
+    `containers.yaml.sample`, `images.yaml.sample`. Future upgrades will never replace your working
+    configuration.
+    ```sh
+    # optional, up to you, feel free to create or add info to yours
+    cp containers.yaml.sample containers.yaml
+    cp images.yaml.sample     images.yaml
+    ```
+- Start the program and you're ready to go, feel free to store it wherever you prefer
+    ```sh
+    ~$ forklift
+    ```
 
 
 ## Contributing
