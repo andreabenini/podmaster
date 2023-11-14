@@ -7,6 +7,8 @@
 # @license          GNU Affero General Public License v3.0
 # @see              Basic messageBox class based on curses for simple message output
 #
+# pyright: reportMissingImports=false
+#
 import math
 import curses
 

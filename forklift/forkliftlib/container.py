@@ -7,6 +7,8 @@
 # @license          GNU Affero General Public License v3.0
 # @see              Containers and images class for dealing with basic operations (list, stop, remove, kill, ...)
 #
+# pyright: reportMissingImports=false
+#
 import math
 import os
 import yaml

@@ -7,6 +7,8 @@
 # @license          GNU Affero General Public License v3.0
 # @see              Basic inputbox for simple text editing, it's not even close to Zenith or a real editor
 #
+# pyright: reportMissingImports=false
+#
 import curses
 
 import forkliftlib

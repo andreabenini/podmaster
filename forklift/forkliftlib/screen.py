@@ -7,6 +7,8 @@
 # @license          GNU Affero General Public License v3.0
 # @see              Handlers and basic method for dealing with curses screen
 #
+# pyright: reportMissingImports=false
+#
 import curses
 import subprocess
 

@@ -7,6 +7,8 @@
 # @license          GNU Affero General Public License v3.0
 # @see              Basic Confirm class based on curses for displaying yes/no messageboxes
 #
+# pyright: reportMissingImports=false
+#
 import math
 import curses
 
