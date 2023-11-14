@@ -214,7 +214,7 @@ class ForkliftSystem(object):
         (menuItems, labelFormat) = self.__container.List()
         menuItems.append(('< Create New Container >', ''))
         self.__menuMain.items = menuItems
-        self.__screen.Text(Caption=labelFormat.format(id='UID', image='Image Name', name='Container Name', state='Status', createdAt='Created At', command='Shell'), X=5, Y=2)
+        self.__screen.Text(Caption=labelFormat.format(id='UID', image='Image Name', name='Name', state='Status', createdAt='Created At', command='Shell'), X=5, Y=2)
         selection = self.__menuMain.Display(X=5, Y=3, keys=[curses.KEY_RIGHT])
         if selection == -1:                                                 # <esc>: just reload the container list
             pass
