@@ -94,8 +94,8 @@ class ForkliftSystem(object):
             menuNewContainer.itemAdd(key)
         menuNewContainer.itemAdd("<<--         Manual Input         -->>")
         menuNewContainer.itemAdd("<<--     Edit containers.yaml     -->>")
-        MessageBox(title='Current directory', message='\n '+str(os.getcwd())+'\n'+(' '*42)+'\n', x=21, y=2, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK), height=15, keypress=False)
-        selection = menuNewContainer.Display(X=24, Y=6, caption='Create new container from image', lines=10, itemWidth=40, footer='<ESC>.Cancel')
+        MessageBox(title='Current directory', message='\n '+str(os.getcwd())+'\n'+(' '*42)+'\n', x=14, y=3, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK), height=15, keypress=False)
+        selection = menuNewContainer.Display(X=17, Y=7, caption='Create new container from image', lines=10, itemWidth=40, footer='<ESC>.Cancel')
         if selection == -1:                                                 # Abort
             return
         elif selection == len(menuNewContainer.items)-1:                    # Edit containers.yaml file
@@ -108,7 +108,7 @@ class ForkliftSystem(object):
             value = list(containers)[selection][1]
         # Edit parameters before executing them
         cliCommand = InputBox(defaultValue=value, title='Input parameters for container creation (edit and adapt your own)', footer2=os.getcwd(), 
-                              size=1024, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel')
+                              y=12, size=1024, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel')
         # Pause curses and execute command
         if cliCommand.value:
             self.__screen.Exec(cliCommand.value)
@@ -120,8 +120,8 @@ class ForkliftSystem(object):
             menuNewImage.itemAdd(key)
         menuNewImage.itemAdd("<<--         Manual Input         -->>")
         menuNewImage.itemAdd("<<--       Edit images.yaml       -->>")
-        MessageBox(title='Current directory', message='\n '+str(os.getcwd())+'\n'+(' '*42)+'\n', x=21, y=2, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK), height=15, keypress=False)
-        selection = menuNewImage.Display(X=24, Y=6, caption='Create new image from profile', lines=10, itemWidth=40, footer='<ESC>.Cancel')
+        MessageBox(title='Current directory', message='\n '+str(os.getcwd())+'\n'+(' '*42)+'\n', x=14, y=3, colors=(curses.COLOR_WHITE, curses.COLOR_BLACK), height=15, keypress=False)
+        selection = menuNewImage.Display(X=17, Y=7, caption='Create new image from profile', lines=10, itemWidth=40, footer='<ESC>.Cancel')
         if selection == -1:                                                 # Abort
             return
         elif selection == len(menuNewImage.items)-1:                        # Edit images.yaml file
@@ -134,7 +134,7 @@ class ForkliftSystem(object):
             value = list(images)[selection][1]
         # Edit parameters before executing them
         cliCommand = InputBox(defaultValue=value, title='Input parameters for image creation (edit and adapt your own)', footer2=os.getcwd(),
-                              size=1024, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel')
+                              y=12, size=1024, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel')
         # Pause curses and execute command
         if cliCommand.value:
             cliExecCommand = cliCommand.value + '; echo -en "\n\nPress any key to continue..."; read -n 1 junk'
@@ -152,7 +152,7 @@ class ForkliftSystem(object):
         (_, ID, Name, Status) = containerID
         menuAction = Menu(screen=self.__screen.screen, colors=(curses.COLOR_WHITE, curses.COLOR_BLUE))
         menuAction.items = menu
-        selected = menuAction.Display(caption=f"[{Name}]", footer=f'Status: {Status}', itemWidth=30, lines=8, X=10, Y=4)
+        selected = menuAction.Display(caption=f"[{Name}]", footer=f'Status: {Status}', itemWidth=70, lines=8, X=10, Y=8)
         if selected==-1:
             return
         (_, action) = menu[selected]
@@ -253,11 +253,11 @@ class ForkliftSystem(object):
             (f'Rename "{name}"', 'rename'),
             (f'Remove "{name}"', 'remove'),
         ]
-        selected = menuAction.Display(caption=f"[{ID}]", footer=' Images action menu  <ESC>.Exit ', itemWidth=70, lines=7, X=20, Y=8)
+        selected = menuAction.Display(caption=f"[{ID}]", footer=' Images action menu  <ESC>.Exit ', itemWidth=70, lines=7, X=10, Y=8)
         if selected == -1:
             return
         elif selected == 0:
-            imageNewName = InputBox(title='Enter the new name for the image', size=1024, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=10)
+            imageNewName = InputBox(title='Enter the new name for the image', size=100, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=13)
             if imageNewName.value:
                 newName = imageNewName.value.replace(' ', '')       # Removing spaces, if any
                 result = self.__container.imageRename(imageIDOld=ID, imageNameNew=newName)
