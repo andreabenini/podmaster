@@ -66,7 +66,7 @@ class ForkliftSystem(object):
                 self.__ReloadSystemConfig()
         except Exception as E:
             MessageBox(title='E R R O R', message=f'\n\nCannot create configuration file \n{self.__file_system}\n\n\nClosing Application\n\n',
-                       footer=' press any key to continue ', x=1, y=1, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                       footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
             self.__Exit = True
 
     def __ReloadSystemConfig(self):
@@ -83,7 +83,7 @@ class ForkliftSystem(object):
     def __editFile(self, filename=None):
         if self.__editor == '' or not filename:
             MessageBox(title='E R R O R', message=f'\n\n System variable $EDITOR is not set \n    Check SYSTEM TAB for details\n\n',
-                        footer=' press any key to continue ', x=10, y=10, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                        footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
             return
         self.__screen.Exec(f"{self.__editor} '{filename}'")
 
@@ -172,7 +172,7 @@ class ForkliftSystem(object):
             nameNew = InputBox(defaultValue=Name, title=f'New name for "{Name}"', size=100, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=10)
             if nameNew.value:
                 if self.__container.Rename(ID, nameNew.value) != '':
-                    MessageBox(title='E R R O R', message=f'\n\nCannot rename\n"{ID}"\nas "{nameNew.value}"\n\n', footer=' press any key to continue ', x=1, y=1, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                    MessageBox(title='E R R O R', message=f'\n\nCannot rename\n"{ID}"\nas "{nameNew.value}"\n\n', footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
                     return
                 message = f"New name: '{nameNew.value}'\n                 "
                 title = 'Container Renamed'
@@ -187,7 +187,7 @@ class ForkliftSystem(object):
                 return
         else:
             return
-        MessageBox(title=title, message=f'\n{message}\n', footer='press any key...', x=10, y=10, colors=(curses.COLOR_WHITE, curses.COLOR_CYAN))
+        MessageBox(title=title, message=f'\n{message}\n', footer='press any key...', colors=(curses.COLOR_WHITE, curses.COLOR_CYAN))
 
     def __StatusInit(self):
         self.__statusBarPages = [(' Containers'), ('   Images'), ('   System')]
@@ -262,7 +262,7 @@ class ForkliftSystem(object):
                 newName = imageNewName.value.replace(' ', '')       # Removing spaces, if any
                 result = self.__container.imageRename(imageIDOld=ID, imageNameNew=newName)
                 if result.strip() != '':
-                    MessageBox(title='E R R O R', message=f'\n{result.strip()}\n', footer=' press any key to continue ', y=12, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                    MessageBox(title='E R R O R', message=f'\n{result.strip()}\n', footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
         elif selected == 1:
             result = Confirm(f"\nDelete image            \n'{ID}'\n", title="Confirm Image Deletion ?", colors=(curses.COLOR_BLACK, curses.COLOR_YELLOW), messageButtons=[' Yes ', ' No '], messageSelected=1, screen=self.__screen.screen)
             if result.value == 0:
