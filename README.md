@@ -1,5 +1,5 @@
 <div style="display: flex; flex-direction: row-reverse; align-items: center;">
-  <img src="icon.png" width="200" alt="Project Icon" style="margin-left: 20px;">
+  <img src="icon.png" alt="Project Icon" style="margin-left: 20px;">
   
 # Pod Master - Utility Collection
 </div>
