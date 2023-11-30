@@ -1,0 +1,328 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# @description      systempodctl - Manage systemd units for containers and general services
+#
+# @author           Andrea Benini
+# @date             2023-11-25
+# @license          GNU Affero General Public License v3.0
+# @see              No dependencies, rather big file but it's a self contained utilities without
+#                   external dependencies, just python3 and it's ready to use
+#
+# pyright: reportMissingImports=false
+#
+VERSION='0.1.2'
+PATTERN='systempod.'
+COMMANDS=('list-unit-files', 'edit', 'delete', 'journal', )
+SERVICES=('python', 'container', )
+
+try:
+    import os
+    import sys
+    import datetime
+    import argparse
+    import tempfile
+    import subprocess
+except Exception as E:
+    print(f"Error while importing modules:\n{str(E)}\nAborting program\n\n")
+    sys.exit(1)
+
+
+class _exceptionCustom(Exception):
+    pass
+
+class systempodctl(object):
+    def __init__(self, parser=None):
+        self.__superuserDetect()
+        self.__user = os.getenv('USER')
+        self.__parser = parser
+        self.__argument = self.__parser.parse_args()
+        # Detecting and setting path
+        if self.__argument.path is None:
+            self.__argument.path = './'
+        self.__argument.path = os.path.realpath(self.__argument.path)
+        if self.__argument.path[-1] != os.path.sep:
+            self.__argument.path += os.path.sep
+        # Systemd user directory, if not root
+        if not self.root:
+            self.__userSystemdDirectory = os.getenv('HOME') + os.path.sep + ".config" + os.path.sep + "systemd" + os.path.sep + "user"
+            os.makedirs(self.__userSystemdDirectory, exist_ok=True)
+        # Editor setup
+        self.__editor = self.__findEditor()
+        if not self.__editor:
+            print("\nERROR: System variable $EDITOR not set\n")
+            sys.exit(1)
+
+    def requireName(self, exitError=1):
+        if not self.__argument.name:
+            print(f"\nERROR:\nERROR: Flag '--name' is required for '{self.__argument.command}' command\nERROR:\n")
+            self.__parser.print_help()
+            sys.exit(exitError)
+
+    def __exec(self, command=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
+        try:
+            process = subprocess.Popen(command, stdout=stdout, stderr=stderr, shell=True, universal_newlines=True, text=True)
+            output, error = process.communicate()
+            return (process.returncode, output, error)
+        except subprocess.CalledProcessError as E:
+            return (-1, "", str(E))
+
+    def __findEditor(self):
+        found = self.__findEditorVariables(variables=['EDITOR', 'VISUAL'])
+        if found is None:
+            found = self.__findEditorUtilities(defaultUtilities=['vim', 'vi', 'nana', 'nano'])
+        return found
+    def __findEditorVariables(self, variables=[]):
+        for item in variables:
+            found = os.getenv(item)
+            if found:
+                return found
+        return None
+    def __findEditorUtilities(self, defaultUtilities=[]):
+        for item in defaultUtilities:
+            (returnCode, output, _) = self.__exec(f"which {item}")
+            if returnCode==0 and output.strip()!='':
+                return output.strip()
+        return None
+
+    def __superuserDetect(self):
+        (returnCode, output, _) = self.__exec('id -u')
+        if returnCode != 0 or int(output.strip()) != 0:
+            self.__root = False
+        else:
+            self.__root = True
+
+
+    # Application getters()
+    @property
+    def command(self):
+        return self.__argument.command
+
+    @property
+    def root(self):
+        return self.__root
+
+
+    def listUnitFiles(self):
+        (returnCode, output, errors) = self.__exec(f'systemctl list-unit-files {PATTERN}*')
+        print(f"systempodctl services (SYSTEM)\n{output}{errors}\n\n", end='')
+        (returnCode, output, errors) = self.__exec(f'systemctl --user list-unit-files {PATTERN}*')
+        print(f"systempodctl services (user: {self.__user})\n{output}{errors}", end='')
+        sys.exit(returnCode)
+
+    def editService(self):
+        try:
+            serviceName = self.__argument.name
+            if not serviceName.startswith(PATTERN):
+                serviceName = PATTERN + serviceName
+            # Try to write a tmp file to the target directory
+            self.__systemdServicePath_createTmp()
+            # Detect if service already exists or a new one should be created
+            userFlag = '--user' if not self.root else ''
+            (returnCode, _, _) = self.__exec(f'systemctl {userFlag} cat {serviceName}', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if returnCode == 0:                 # Edit an existing service
+                content = self.__editService(serviceName=serviceName)
+                content = self.__newServiceEditContent(content=content)
+                filename = self.__newServiceInstall(serviceName=serviceName, content=content)
+                print(f'\nService "{serviceName}" updated\n    - {filename}\n')
+            else:                               # It doesn't exists, try to create a new service
+                if not self.__argument.type:
+                    raise _exceptionCustom(f"Flag '--type' is required for creating the new service '{self.__argument.name}'")
+                if   self.__argument.type == 'python':
+                    content = self.__newServicePythonGetStream(serviceName=serviceName)
+                elif self.__argument.type == 'container':
+                    content = self.__newServiceContainerGetStream(serviceName=serviceName)
+                else:
+                    raise _exceptionCustom(f"Unsupported type: {self.__argument.type}") 
+                content = self.__newServiceEditContent(content=content)
+                filename = self.__newServiceInstall(serviceName=serviceName, content=content)
+                print(f"\nService '{serviceName}' has been created\n    - {filename}\nDon't forget to 'systemctl daemon-reload' to apply changes\n")
+        except _exceptionCustom as E:
+            print(f"{E}, aborting operation")
+        except Exception as E:
+            print(f"ERROR: {E}")
+
+    def __editService(self, serviceName = None):
+        with open(self.__systemdServicePath() + os.path.sep + serviceName + '.service', 'r') as file:
+            return file.read()
+
+    def __newServicePythonGetStream(self, serviceName=None):
+        return f"""# Service {serviceName}
+[Unit]
+Description=Your useful description for {serviceName} service
+After=network.target
+#Before=before.this.service
+#Requires=requires.this.service
+
+[Service]
+Type=simple
+#Type=notify
+#User={self.__user}
+WorkingDirectory={self.__argument.path}
+# If you are using a virtualenv uncomment the line [Environment] below and
+#     point that path to the 'activate' file (usually in ./virtualenv/bin)
+# Prepending service PATH also prevents other interpreters from being used
+#Environment=PATH={self.__argument.path}bin:$PATH
+ExecStart={self.__argument.path}YOUR_PYTHON_PROGRAM --with --your --arguments
+# Use ExecReload only if you really need it
+#ExecReload={self.__argument.path}YOUR_PYTHON_PROGRAM --with --your --arguments --onreload
+Restart=on-failure
+#Restart=always
+
+[Install]
+WantedBy=multi-user.target
+#WantedBy=default.target
+#WantedBy=network.target
+"""
+
+    def __newServiceContainerGetStream(self, serviceName=None):
+        return f"""# Service {serviceName}
+# docker and podman have the same syntax but podman is daemonless
+# and have less restrictions on unit requirements, see notes below
+
+[Unit]
+Description=Your useful description for {serviceName} service
+# podman does NOT require a daemon for running containers, usual runlevels are fine
+After=network.target
+#Before=before.this.service
+# docker requires a daemon for running containers, these settings are mandatory
+# feel free to add further limitations. Uncomment and do NOT remove these twos:
+#After=docker.service
+#Requires=docker.service
+
+[Service]
+# Container engine locations usually available:
+# - /usr/bin/podman
+# - /usr/bin/docker
+#Type=simple
+#Type=notify
+#User={self.__user}
+WorkingDirectory={self.__argument.path}
+ExecStart=/usr/bin/podman  start -a YOUR_CONTAINER_NAME --with --your --arguments
+ExecStop=/usr/bin/podman   stop  -t 2 YOUR_CONTAINER_NAME
+ExecReload=/usr/bin/podman restart YOUR_CONTAINER_NAME --with --your --arguments --onreload
+
+Restart=on-failure
+#Restart=always
+
+[Install]
+WantedBy=multi-user.target
+#WantedBy=default.target
+#WantedBy=network.target
+"""
+
+    def __newServiceEditContent(self, content=None):
+        with tempfile.NamedTemporaryFile(mode='w+', delete=True) as fileTemp:
+            fileTemp.write(content)
+            fileTemp.flush()
+            datetimeInitial = datetime.datetime.fromtimestamp(os.path.getmtime(fileTemp.name))
+            returnCode = subprocess.run([self.__editor, fileTemp.name])
+            if returnCode.returncode != 0:      # Changes aborted
+                raise _exceptionCustom(f"Cannot edit {fileTemp.name}, editor error")
+            datetimeEnd = datetime.datetime.fromtimestamp(os.path.getmtime(fileTemp.name))
+            if datetimeInitial==datetimeEnd:    # Not an error, operator has aborted changes
+                raise _exceptionCustom(f"No changes has been made")
+            content = fileTemp.name
+            # Now read back what user wrote in the file
+            fileTemp.seek(0)
+            return fileTemp.read()
+    
+    def __systemdServicePath(self):
+        if self.root:
+            (returnCode, output, _) = self.__exec(f"systemd-path systemd-system-conf", stderr=subprocess.DEVNULL)
+            if returnCode != 0:
+                raise _exceptionCustom("Cannot detect systemd-system-conf directory")
+            return output.strip()
+        return self.__userSystemdDirectory
+
+    def __systemdServicePath_createTmp(self):
+        dummyFile = self.__systemdServicePath() + os.path.sep + ".tmp."+PATTERN+"tmp"
+        try:
+            with open(dummyFile, "w+") as file:
+                file.write(".")
+        except PermissionError as E:
+            raise _exceptionCustom(f"ERROR: Permission denied ({self.__systemdServicePath()})")
+        if os.path.exists(dummyFile):
+            os.remove(dummyFile)
+
+    def __newServiceInstall(self, serviceName=None, content=None):
+        serviceFileName = self.__systemdServicePath() + os.path.sep + serviceName + '.service'
+        with open(serviceFileName, 'w+') as file:
+            file.write(content)
+        return serviceFileName
+
+    def deleteService(self):
+        try:
+            serviceName = self.__argument.name
+            if not serviceName.startswith(PATTERN):
+                serviceName = PATTERN + serviceName
+            userFlag = '--user' if not self.root else ''
+            # Stop service
+            (returnCode, _, error) = self.__exec(f'systemctl {userFlag} stop {serviceName}')
+            if returnCode != 0:
+                raise _exceptionCustom(error.strip())
+            # Disable service
+            (returnCode, _, error) = self.__exec(f'systemctl {userFlag} disable {serviceName}')
+            if returnCode != 0:
+                raise _exceptionCustom(error.strip())
+            # rm service
+            serviceNamefile = self.__systemdServicePath()+os.path.sep+serviceName+'.service'
+            if os.path.exists(serviceNamefile):
+                os.remove(serviceNamefile)
+            # Reload systemd
+            self.__exec(f'systemctl {userFlag} daemon-reload')
+            self.__exec(f'systemctl {userFlag} reset-failed')
+            userLabel = f'User: {self.__user}, ' if not self.root else ''
+            print(f"{userLabel}Service '{serviceName}' removed, systemd daemon reloaded")
+            return True
+        except _exceptionCustom as E:
+            print(f"{E}\naborting operation")
+        except Exception as E:
+            print(f"ERROR: {E}")
+        return False
+    
+    def journalFollow(self):
+        try:
+            serviceName = self.__argument.name
+            if not serviceName.startswith(PATTERN):
+                serviceName = PATTERN + serviceName
+            userFlag = '--user' if not self.root else ''
+            os.system(f"journalctl -u {serviceName} {userFlag} --follow")
+        except KeyboardInterrupt:
+            print("")
+        except Exception as E:
+            print(f"ERROR: {E}")
+
+
+def main():                             # Entry point for the package (when installed from pip)
+    parser = argparse.ArgumentParser(description='systemdpodctl: manage unit-files for containers and standalone programs', 
+                                     epilog="[NOTE] Services will be created with current user privileges unless otherwise specified.\n"+
+                                            "       Please use <sudo> to create root services able to run without being logged in.\n ",
+                                     formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument(dest='command', help="types: ("+", ".join(COMMANDS)+")\n"+
+                                             "list-unit-files.  Display units created with this utility\n"+
+                                             "edit.             Create/Edit systemd service for "+"|".join(SERVICES)+"\n"+
+                                             "delete.           Delete a systempodctl created service\n"+
+                                             "journal.          Open journal and report logs in follow mode for --name")    
+    parser.add_argument('-t', '--type', dest='type',  default=None,  help=f"Service type ("+",".join(SERVICES)+")")
+    parser.add_argument('-n', '--name', dest='name',  default=None,  help=f"Service name")
+    parser.add_argument('-p', '--path', dest='path',  default="./",  help=f"Absolute path used when creating a service (Default:./)\n"+"ALWAYS use an absolute path")
+    App = systempodctl(parser=parser)
+    if App.command not in COMMANDS:
+        parser.print_help()
+        sys.exit(1)
+    if App.command == 'list-unit-files':
+        App.listUnitFiles()
+    elif App.command == 'edit':
+        App.requireName(2)
+        App.editService()
+    elif App.command == 'delete':
+        App.requireName(31)
+        if not App.deleteService():
+            sys.exit(32)
+    elif App.command == 'journal':
+        App.requireName(4)
+        App.journalFollow()
+
+if __name__ == "__main__":
+    main()
