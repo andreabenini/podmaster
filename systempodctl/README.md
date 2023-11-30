@@ -30,9 +30,11 @@ service files quickly. Virtualenv or fancy modules are not required at all.
 There's no need to install it through pip and you can barely get it by cloning this repository only.
 
 ### Installation
-- Clone this repository
+- Clone this repository (`git clone http://..`)
 - Save `systempodctl` utility wherever you prefer, it might be better if reachable from your
 local `$PATH` variable
+- ~~Through `pip install podmaster`~~.  
+_Pypi.org account and project setup completed. Test in progress but it's **not yet ready for prime time**_
 
 
 
