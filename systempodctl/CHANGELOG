@@ -1,0 +1,30 @@
+# Forklift Change Log
+All notable changes to this project will be documented in this file.
+ 
+
+## [0.1.3] - 2023-11-30
+Python _**pypi**_ package entry added for the whole repository: `podmaster`
+#### Added
+- Project, code, documentation initially released on github
+- First version publicly available on **pypi**, test in progress, do not use
+    it from there yet, clone from this repository instead
+- Adding new command `journal` for displaying logs on console, useful for
+    debugging
+- CHANGELOG file, this file
+#### Changed
+- Documentation cleanup
+#### To Do
+- Fix **pypi** repository before adding new releases or features
+---
+
+
+## [0.1.2] - 2023-11-25
+First public release on GitHub
+#### Added
+- Support for generic containers usable from podman or docker
+- Support for python scripts, virtualenv configuration in place if it's needed
+#### Changed
+- Minor bugfixing
+- Documentation
+#### Fixed
+- Command line parameters and `parser.print_help()`
