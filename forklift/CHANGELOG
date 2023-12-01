@@ -1,6 +1,13 @@
 # Forklift Change Log
 All notable changes to this project will be documented in this file.
- 
+
+
+## [0.2.3] - 2023-12-01
+#### Changed
+- Version alignment from github repo as well as from Pypi packages.
+  Release version, no bugfixing
+---
+
 
 ## [0.2.0] - 2023-11-07
 #### Added
