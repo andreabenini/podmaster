@@ -48,6 +48,19 @@ class Screen(object):
         else:
             self.screen.addstr(Y, X, Caption, curses.color_pair(colorPair))
 
+    def wrapText(self, Text=None, Max=0):
+        if len(Text) <= Max:
+            return Text
+        Output = ''
+        lineLen = 0
+        for word in Text.split():
+            if lineLen+len(word) > Max and lineLen != 0:
+                Output += f'\n'
+                lineLen = 0
+            Output += f'{word} '
+            lineLen += len(word)
+        return Output
+
     def KeyPress(self):
         self.Refresh()
         return self.screen.getch()

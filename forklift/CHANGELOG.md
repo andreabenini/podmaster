@@ -2,7 +2,25 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.2.4] - 2023-12-03
+Bug fixing version, no new feature present
+#### Added
+- Output with success or failure messages on container images operations
+- Text wrapping on widgets when output is too long
+#### Changed
+- Output operations on container images
+- Displaying all images, even intermediate ones (labeled as '\<none\>')
+#### Fixed
+- Image removal errors were not properly reported to user
+- Display tmp snapshots in images list (when present)
+#### To Do
+- pypi version still need some tweak, use github repo version instead
+- testunits for CLI and widgets, how to ?
+---
+
+
 ## [0.2.3] - 2023-12-01
+First version published on Pypi, still in progress and needs to be fixed there..
 #### Changed
 - Version alignment from github repo as well as from Pypi packages.
   Release version, no bugfixing
@@ -14,7 +32,7 @@ All notable changes to this project will be documented in this file.
 - Versioning and documentation, license AGPL
 - Project initially released on github
 - Created as a python package and published on Python official repository.
-    "`pip install forklift`" to have it installed
+    "`pip install forklift-container`" to have it installed
 - container `logs` command added
 #### Changed
 - Configuration path as command line parameter

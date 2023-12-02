@@ -41,6 +41,7 @@ class Container(object):
     def fileimages(self):
         return self.__file_images
     
+    # @return (int, string) [returnCode, outputMessage]
     def __exec(self, command=None):
         try:
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=None, shell=True, universal_newlines=True)
@@ -144,6 +145,12 @@ class Container(object):
                     [created, _] = item['CreatedAt'].split("T")
                     size = math.floor(item['Size']/1000000)
                     items[itemName] = {'idShort': item['Id'][:12], 'repository': repository, 'tag': tag, 'created': created, 'size': size}
+            else:       # <none> image name
+                itemName = item['Id']
+                repository = tag = "<none>"
+                [created, _] = item['CreatedAt'].split("T")
+                size = math.floor(item['Size']/1000000)
+                items[itemName] = {'idShort': item['Id'][:12], 'repository': repository, 'tag': tag, 'created': created, 'size': size}
         results = []
         formatFields = f"{{repository:<{lenRepository}}}  {{tag:<{lenTag}}}  {{id:12}}  {{created:10}}  {{size}}"
         for item in items:
@@ -159,15 +166,16 @@ class Container(object):
 
     def imageRename(self, imageIDOld=None, imageNameNew=None):
         if not imageIDOld:
-            return ''
-        (_, output) = self.__exec(f"{self.__platform} tag '{imageIDOld}' '{imageNameNew}' 2>&1")
+            return (-1, '')
+        (returnCode, output) = self.__exec(f"{self.__platform} tag '{imageIDOld}' '{imageNameNew}' 2>&1")
         if output.strip()=='':
-            self.imageDelete(imageID=imageIDOld)                # I'm not interested in output message like: 'Untagged: ...'
-            return ''
-        return output.strip()
+            (returnCode, output) = self.imageDelete(imageID=imageIDOld)
+            if output.lower().startswith("untagged:"):          # I'm not interested in output message like: 'Untagged: ...'
+                return (0, '')
+        return (returnCode, output.strip())
 
     def imageDelete(self, imageID=None):
         if not imageID:
-            return ''
-        (_, output) = self.__exec(f"{self.__platform} rmi {imageID} 2>&1")
-        return output.strip()
+            return (-1, '')
+        (errorCode, output) = self.__exec(f"{self.__platform} rmi {imageID} 2>&1")
+        return (errorCode, output.strip())

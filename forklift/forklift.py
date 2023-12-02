@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='0.2.3'
+VERSION='0.2.4'
 
 import os
 import sys
@@ -29,6 +29,7 @@ try:
 except Exception as E:
     print(f"Error while importing modules:\n{str(E)}\nAborting program\n\n")
     sys.exit(1)
+MSG_ANY_KEY=' press any key... '
 
 
 class ForkliftSystem(object):
@@ -66,7 +67,7 @@ class ForkliftSystem(object):
                 self.__ReloadSystemConfig()
         except Exception as E:
             MessageBox(title='E R R O R', message=f'\n\nCannot create configuration file \n{self.__file_system}\n\n\nClosing Application\n\n',
-                       footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                       footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
             self.__Exit = True
 
     def __ReloadSystemConfig(self):
@@ -83,7 +84,7 @@ class ForkliftSystem(object):
     def __editFile(self, filename=None):
         if self.__editor == '' or not filename:
             MessageBox(title='E R R O R', message=f'\n\n System variable $EDITOR is not set \n    Check SYSTEM TAB for details\n\n',
-                        footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                       footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
             return
         self.__screen.Exec(f"{self.__editor} '{filename}'")
 
@@ -172,7 +173,7 @@ class ForkliftSystem(object):
             nameNew = InputBox(defaultValue=Name, title=f'New name for "{Name}"', size=100, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=10)
             if nameNew.value:
                 if self.__container.Rename(ID, nameNew.value) != '':
-                    MessageBox(title='E R R O R', message=f'\n\nCannot rename\n"{ID}"\nas "{nameNew.value}"\n\n', footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                    MessageBox(title='E R R O R', message=f'\n\nCannot rename\n"{ID}"\nas "{nameNew.value}"\n\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
                     return
                 message = f"New name: '{nameNew.value}'\n                 "
                 title = 'Container Renamed'
@@ -187,7 +188,7 @@ class ForkliftSystem(object):
                 return
         else:
             return
-        MessageBox(title=title, message=f'\n{message}\n', footer='press any key...', colors=(curses.COLOR_WHITE, curses.COLOR_CYAN))
+        MessageBox(title=title, message=f'\n{message}\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_CYAN))
 
     def __StatusInit(self):
         self.__statusBarPages = [(' Containers'), ('   Images'), ('   System')]
@@ -260,13 +261,18 @@ class ForkliftSystem(object):
             imageNewName = InputBox(title='Enter the new name for the image', size=100, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=13)
             if imageNewName.value:
                 newName = imageNewName.value.replace(' ', '')       # Removing spaces, if any
-                result = self.__container.imageRename(imageIDOld=ID, imageNameNew=newName)
+                (_, result) = self.__container.imageRename(imageIDOld=ID, imageNameNew=newName)
                 if result.strip() != '':
-                    MessageBox(title='E R R O R', message=f'\n{result.strip()}\n', footer=' press any key to continue ', colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+                    MessageBox(title='E R R O R', message=f'\n{result.strip()}\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
         elif selected == 1:
             result = Confirm(f"\nDelete image            \n'{ID}'\n", title="Confirm Image Deletion ?", colors=(curses.COLOR_BLACK, curses.COLOR_YELLOW), messageButtons=[' Yes ', ' No '], messageSelected=1, screen=self.__screen.screen)
             if result.value == 0:
-                self.__container.imageDelete(imageID=ID)
+                (returnCode, result) = self.__container.imageDelete(imageID=ID)
+                if returnCode == 0:
+                    MessageBox(title=f'Removing {name}', message=f'\n{result}\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_CYAN))
+                else:
+                    result = self.__screen.wrapText(Text=result, Max=60)
+                    MessageBox(title='E R R O R', message=f'\n{result}\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
 
     def __tabSystem(self):
         self.__screen.Text(Caption=f'Forklift version      v{VERSION}', X=5, Y=2)
