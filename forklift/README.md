@@ -30,8 +30,9 @@ don't want to be annoyed by usual and repetitive commands
     (`docker ps -a; docker kill <ID>; docker start <ID> <params, ...>`).
 That's what this utility is about.
 
+
 #### Rolling demo overview
-https://github.com/andreabenini/podmaster/assets/9632086/25064afe-f242-4686-9e5a-071f78af4590
+https://github.com/andreabenini/podmaster/assets/9632086/198ac4c7-416a-4217-89c6-4eea30e46561
 
 
 ## Features 
