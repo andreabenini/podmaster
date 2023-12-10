@@ -13,6 +13,7 @@ Bug fixing version, no new feature present
 #### Fixed
 - Image removal errors were not properly reported to user
 - Display tmp snapshots in images list (when present)
+- Proper error management upon container deletion (when it's still running)
 #### To Do
 - pypi version still need some tweak, use github repo version instead
 - testunits for CLI and widgets, how to ?

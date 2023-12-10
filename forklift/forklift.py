@@ -154,6 +154,7 @@ class ForkliftSystem(object):
         menuAction = Menu(screen=self.__screen.screen, colors=(curses.COLOR_WHITE, curses.COLOR_BLUE))
         menuAction.items = menu
         selected = menuAction.Display(caption=f"[{Name}]", footer=f'Status: {Status}', itemWidth=70, lines=8, X=10, Y=8)
+        colors   = (curses.COLOR_WHITE, curses.COLOR_CYAN)
         if selected==-1:
             return
         (_, action) = menu[selected]
@@ -173,22 +174,29 @@ class ForkliftSystem(object):
             nameNew = InputBox(defaultValue=Name, title=f'New name for "{Name}"', size=100, colors=(curses.COLOR_BLACK, curses.COLOR_CYAN), footer='<ENTER>.Confirm <ESC>.Cancel', y=10)
             if nameNew.value:
                 if self.__container.Rename(ID, nameNew.value) != '':
-                    MessageBox(title='E R R O R', message=f'\n\nCannot rename\n"{ID}"\nas "{nameNew.value}"\n\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
-                    return
-                message = f"New name: '{nameNew.value}'\n                 "
-                title = 'Container Renamed'
+                    title   = 'E R R O R'
+                    colors  = (curses.COLOR_WHITE, curses.COLOR_RED)
+                    message = f'\nCannot rename\n"{ID}"\nas "{nameNew.value}"\n'
+                else:
+                    title   = 'Container Renamed'
+                    message = f'New name: "{nameNew.value}"\n                 '
             else:
                 return
         elif action=='remove':
             confirm = Confirm(f"\nDelete container            \n'{Name}'\n", title="Confirm Container Deletion ?", colors=(curses.COLOR_BLACK, curses.COLOR_YELLOW), messageButtons=[' Yes ', ' No '], messageSelected=1, screen=self.__screen.screen)
             if confirm.value == 0:
-                message = str(self.__container.Remove(containerID=ID))
-                title = f'Removing {Name}'
+                (returnCode, message) = self.__container.Remove(containerID=ID)
+                if returnCode == 0:
+                    title   = 'Removing '+Name
+                else:
+                    title   = 'E R R O R'
+                    colors  = (curses.COLOR_WHITE, curses.COLOR_RED)
+                    message = self.__screen.wrapText(Text=message, Max=60)
             else:
                 return
         else:
             return
-        MessageBox(title=title, message=f'\n{message}\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_CYAN))
+        MessageBox(title=title, message=f'\n{message}\n', footer=MSG_ANY_KEY, colors=colors)
 
     def __StatusInit(self):
         self.__statusBarPages = [(' Containers'), ('   Images'), ('   System')]

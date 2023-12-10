@@ -115,8 +115,8 @@ class Container(object):
         return output.strip()
 
     def Remove(self, containerID=None):
-        (_, output) = self.__exec(f"{self.__platform} rm {containerID}")
-        return output.strip()
+        (errorCode, output) = self.__exec(f"{self.__platform} rm {containerID} 2>&1")
+        return (errorCode, output.strip())
 
     def containerProfilesList(self):
         return self.__containerProfiles.items()
