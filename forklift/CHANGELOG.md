@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.2.5] - 2023-12-12
+#### Added
+- Removed `system.yaml` configuration file completely, there's no need of
+  a oneliner config file anymore. Container engine now detected on startup.
+#### To Do
+- Self contained single file application is now under testing, it will be
+  available from the next release
+- pypi version it's still on testing phase and hatchling need few tweaks,
+  please use github repo version at the moment
+- testunits for CLI and widgets, how to ?
+---
+
+
 ## [0.2.4] - 2023-12-03
 Bug fixing version, no new feature present
 #### Added
@@ -14,9 +27,6 @@ Bug fixing version, no new feature present
 - Image removal errors were not properly reported to user
 - Display tmp snapshots in images list (when present)
 - Proper error management upon container deletion (when it's still running)
-#### To Do
-- pypi version still need some tweak, use github repo version instead
-- testunits for CLI and widgets, how to ?
 ---
 
 

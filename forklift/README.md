@@ -80,8 +80,8 @@ options:
     - From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
     this site. Clone the repo or download sources from there
     - ~~from **_pip_**~~: 
-        ~~`pip install forklift`~~
-        **_(WORK IN PROGRESS, dealing with PyPi package maintainers)_**
+        ~~`pip install forklift/podmaster`~~
+        **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
 - **[Optional]** Set `$EDITOR` environment variable in your favorite shell. If you have a working
     environment with *$EDITOR* set in place you can directly edit **`.yaml`** configuration files
     inside the utility
@@ -90,8 +90,6 @@ options:
     # Default editor
     export EDITOR=/usr/bin/vim
     ```
-- Edit the configuration file `system.yaml` and change it accordingly to your favorite
-    container management utility, default: **podman**, change it to **docker** if needed
 - **_[optional]_** Create your `containers.yaml` and `images.yaml` files to have working templates
     while using the utility. You can create and edit them externally from the shell or 
     automatically while using the program. These two samples are provided as a reference:

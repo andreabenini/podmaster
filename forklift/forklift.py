@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='0.2.4'
+VERSION='0.2.5'
 
 import os
 import sys
@@ -39,13 +39,15 @@ class ForkliftSystem(object):
         if not self.__editor: 
             self.__editor = ''
         self.__screen = Screen()
-        self.__file_system = path+os.path.sep+'system.yaml'
         self.__menuMain = Menu(screen=self.__screen.screen)
         self.__container = Container(path=path)
-        self.__LoadSystemConfig()
         self.__StatusInit()
 
     def Run(self):
+        if not self.__container.valid:
+            self.__screen.Clear()
+            MessageBox(title='E R R O R', message=f'\n\nCannot detect container engine (docker|podman|...)\nClosing Application\n\n', footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
+            return
         while not self.__Exit:
             self.__screen.Clear()
             self.__StatusBar()
@@ -58,27 +60,6 @@ class ForkliftSystem(object):
 
     def Close(self):
         self.__screen.close()
-
-    def __LoadSystemConfig(self):
-        try:
-            if not self.__ReloadSystemConfig():
-                with open(self.__file_system, 'w+') as file:            # Fill up with default values
-                    yaml.dump({'container': 'podman'}, file)
-                self.__ReloadSystemConfig()
-        except Exception as E:
-            MessageBox(title='E R R O R', message=f'\n\nCannot create configuration file \n{self.__file_system}\n\n\nClosing Application\n\n',
-                       footer=MSG_ANY_KEY, colors=(curses.COLOR_WHITE, curses.COLOR_RED))
-            self.__Exit = True
-
-    def __ReloadSystemConfig(self):
-        try:
-            with open(self.__file_system, 'r') as file:
-                self.__systemInformation = yaml.safe_load(file)
-                self.__container.platform = self.__systemInformation['container']
-                return True
-        except Exception as E:
-            self.__systemInformation = {}
-        return False
 
 
     def __editFile(self, filename=None):
@@ -290,7 +271,6 @@ class ForkliftSystem(object):
 
         systemMenu = Menu(screen=self.__screen.screen)
         systemMenu.items = [
-            ('Edit program configuration       <system.yaml>',     'config'),
             ('Edit container build profiles    <containers.yaml>', 'containers'),
             ('Edit image build profiles        <images.yaml>',     'images'),
             ('Exit Program', 'exit'),
@@ -300,16 +280,13 @@ class ForkliftSystem(object):
             pass
         elif selection == -2:           # Left (goto tab left)
             self.__tabCurrent = 1
-        elif selection == 0:            # Edit system.yaml
-            self.__editFile(self.__file_system)
-            self.__ReloadSystemConfig()
-        elif selection == 1:            # Edit containers.yaml
+        elif selection == 0:            # Edit containers.yaml
             self.__editFile(self.__container.filecontainers)
             self.__container.LoadContainers()
-        elif selection == 2:            # Edit images.yaml
+        elif selection == 1:            # Edit images.yaml
             self.__editFile(self.__container.fileimages)
             self.__container.LoadImages()
-        elif selection == 3:            # Exit
+        elif selection == 2:            # Exit
             self.__Exit = True            
 
 

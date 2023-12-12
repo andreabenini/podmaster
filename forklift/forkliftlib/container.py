@@ -20,27 +20,44 @@ from forkliftlib.inputBox import InputBox
 
 
 class Container(object):
-    def __init__(self, path='', platform='podman'):
-        self.__platform = platform
+    def __init__(self, path=''):
         self.__file_containers = path+os.path.sep+'containers.yaml'
         self.__file_images     = path+os.path.sep+'images.yaml'
+        self.__detectPlatform(['podman', 'docker'])
         self.LoadContainers()
         self.LoadImages()
 
     @property
     def platform(self):
         return self.__platform
-    @platform.setter
-    def platform(self, value):
-        self.__platform = value
     
+    @property
+    def valid(self):
+        return self.__isValid
+
     @property
     def filecontainers(self):
         return self.__file_containers
     @property
     def fileimages(self):
         return self.__file_images
-    
+
+    # Detect container runner (podman, docker, ...)
+    def __detectPlatform(self, platforms):
+        if platforms:
+            element = platforms[0]
+            tail = platforms[1:]
+            (errorCode, _) = self.__exec(f"{element} --version 2>/dev/null")
+            if errorCode == 0:
+                self.__isValid = True
+                self.__platform = element
+            else:
+                self.__detectPlatform(tail)
+        else:
+            self.__isValid = False
+            self.__platform = None
+
+
     # @return (int, string) [returnCode, outputMessage]
     def __exec(self, command=None):
         try:
