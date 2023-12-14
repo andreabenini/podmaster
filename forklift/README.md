@@ -22,7 +22,7 @@ prefer a specific Window Manager.
 I expressly don't want to rely on X11/Wayland, infinite dependencies 
 (or keep them to the bare minimum) and it has to be text-only and usable from
 a remote shell.  
-This utility relies on: python (+yaml) and curses bindings (just plain curses,
+This utility relies on: python and curses bindings (just plain curses,
 no extra widgets required).  
 It is not a fully fledged solution but rather a small and quick tool for
 running boring tasks, you'll still use docker/podman of your choice but you
@@ -43,9 +43,9 @@ https://github.com/andreabenini/podmaster/assets/9632086/198ac4c7-416a-4217-89c6
 - **NOT** related to Kubernetes, orchestrators or pods, just "simple" containers.  
     Targeted to personal workstations and workflows, no matter if local or on a
     remote ssh shell
-- python-curses is the only requirement (but yaml), no extra deps, no curses library
+- python-curses is the only requirement, no extra deps, no curses library
     widgets. Everything builtin and self contained in the project
-- _.yaml_ based project configuration and user setup
+- _.yaml_ based user configuration
 - Container engine independent, tested on: **_docker, podman_**. LXD might be the next
     if someone requires it
 - Build images and container from within the utility, ContainerCommander like style
@@ -75,7 +75,7 @@ options:
 
 ## Installation and configuration
 
-- Requirements: _'python3'_, _'yaml'_ and _'python curses'_ are required, nothing else. There's no need for a VirtualEnv
+- Requirements: _'python3'_ and _'python curses'_ are required, nothing else. There's **no need** for a VirtualEnv
 - Installation methods:
     - From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
     this site. Clone the repo or download sources from there
@@ -84,7 +84,7 @@ options:
         **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
 - **[Optional]** Set `$EDITOR` environment variable in your favorite shell. If you have a working
     environment with *$EDITOR* set in place you can directly edit **`.yaml`** configuration files
-    inside the utility
+    from the utility
     ```sh
     # file: $HOME/$USER/.bashrc
     # Default editor
