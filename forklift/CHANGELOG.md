@@ -2,6 +2,22 @@
 All notable changes to this project will be documented in this file.
 
 
+## [0.2.6] - 2023-12-14
+#### Added
+- Standalone, self contained single file application is now ready. If you
+  don't want to clone or copy the whole project just take `forklift.app`
+  with you on your favorite local or remote host.  
+  Self-contained standalone still requires: python, python-curses.  
+  This is a fully working minified python application ready to run.
+#### Changed
+- Finally removed yaml library dependency from this project. The only
+  dependency is now the curses library, there's no need for a virtualenv.
+#### To Do
+- pypi version it's still on testing phase and hatchling need few tweaks,
+  please use github repo version at the moment
+---
+
+
 ## [0.2.5] - 2023-12-12
 #### Added
 - Removed `system.yaml` configuration file completely, there's no need of

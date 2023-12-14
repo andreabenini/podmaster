@@ -11,7 +11,7 @@
 #
 import math
 import os
-import yaml
+import csv
 import json
 import subprocess
 
@@ -67,19 +67,25 @@ class Container(object):
         except subprocess.CalledProcessError as E:
             return (-1, str(E))
     
+    # Manually loading yaml files sucks but I really want to avoid every single extra dependency (now using stdbase lib only)
+    def __loadFile(self, filename=None):
+        result = {}
+        try:
+            with open(filename, 'r') as file:
+                streamReader = csv.reader(file, delimiter=":")
+                for line in streamReader:
+                    if len(line) > 1:
+                        key   = str(line[0]).strip()
+                        value = str(':'.join(line[1:])).strip()
+                        if not key.startswith('#'):
+                            result[key] = value
+        except Exception:
+            pass
+        return result
     def LoadContainers(self):
-        try:
-            with open(self.__file_containers, 'r') as file:
-                self.__containerProfiles = yaml.safe_load(file)
-        except Exception as E:
-            self.__containerProfiles = {}
-
+        self.__containerProfiles = self.__loadFile(self.__file_containers)
     def LoadImages(self):
-        try:
-            with open(self.__file_images, 'r') as file:
-                self.__imageProfiles = yaml.safe_load(file)
-        except Exception as E:
-            self.__imageProfiles = {}
+        self.__imageProfiles = self.__loadFile(self.__file_images)
 
     def List(self):
         results = []

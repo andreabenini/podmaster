@@ -11,12 +11,11 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='0.2.5'
+VERSION='0.2.6'
 
 import os
 import sys
 try:
-    import yaml
     import curses
     import argparse
 
@@ -291,8 +290,9 @@ class ForkliftSystem(object):
 
 
 def main():                             # Entry point for the package (when installed from pip)
+    pathDefault = os.path.dirname(os.path.realpath(__file__+os.path.sep+'..' if __file__.endswith('__main__.py') else __file__))
     parser = argparse.ArgumentParser(description='Forklift: friendly utility for dealing with containers', epilog=f" ", formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-p', '--path',  dest='path',  default=os.path.dirname(os.path.realpath(__file__)),  help=f"System and user configuration files path (default: {os.path.dirname(os.path.realpath(__file__))})")
+    parser.add_argument('-p', '--path',  dest='path',  default=pathDefault,  help=f"System and user configuration files path (default: {pathDefault})")
     argument = parser.parse_args()
     App = ForkliftSystem(path=argument.path)
     App.Run()
