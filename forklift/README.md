@@ -77,12 +77,15 @@ options:
 
 - Requirements: _'python3'_ and _'python curses'_ are required, nothing else. There's **no need** for a VirtualEnv
 - Installation methods:
-    - From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
+    1. Download just `forklift.app` file and use it as a standalone application. Python and curses needs to be
+    available in your system but nothing else is really needed. This compact executable contains everything,
+    add optional .yaml files if you need them _(see below)_
+    2. From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
     this site. Clone the repo or download sources from there
-    - ~~from **_pip_**~~: 
+    3. ~~from **_pip_**~~: 
         ~~`pip install forklift/podmaster`~~
         **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
-- **[Optional]** Set `$EDITOR` environment variable in your favorite shell. If you have a working
+- **_[Optional]_** Set `$EDITOR` environment variable in your favorite shell. If you have a working
     environment with *$EDITOR* set in place you can directly edit **`.yaml`** configuration files
     from the utility
     ```sh
@@ -90,7 +93,7 @@ options:
     # Default editor
     export EDITOR=/usr/bin/vim
     ```
-- **_[optional]_** Create your `containers.yaml` and `images.yaml` files to have working templates
+- **_[Optional]_** Create your `containers.yaml` and `images.yaml` files to have working templates
     while using the utility. You can create and edit them externally from the shell or 
     automatically while using the program. These two samples are provided as a reference:
     `containers.yaml.sample`, `images.yaml.sample`. Future upgrades will never replace your working
@@ -103,6 +106,7 @@ options:
 - Start the program and you're ready to go, feel free to store it wherever you prefer
     ```sh
     ~$ forklift
+    # ~$ forklift.app       # If you're using the minified version
     ```
 
 
