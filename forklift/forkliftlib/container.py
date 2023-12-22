@@ -30,15 +30,12 @@ class Container(object):
     @property
     def platform(self):
         return self.__platform
-
     @property
     def platformList(self):             # Currently supported container engines
         return ['podman', 'docker']
-
     @property
     def valid(self):
         return self.__isValid
-
     @property
     def filecontainers(self):
         return self.__file_containers
