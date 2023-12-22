@@ -23,14 +23,18 @@ class Container(object):
     def __init__(self, path=''):
         self.__file_containers = path+os.path.sep+'containers.yaml'
         self.__file_images     = path+os.path.sep+'images.yaml'
-        self.__detectPlatform(['podman', 'docker'])
+        self.__detectPlatform(self.platformList)
         self.LoadContainers()
         self.LoadImages()
 
     @property
     def platform(self):
         return self.__platform
-    
+
+    @property
+    def platformList(self):             # Currently supported container engines
+        return ['podman', 'docker']
+
     @property
     def valid(self):
         return self.__isValid
