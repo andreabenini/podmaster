@@ -157,7 +157,7 @@ class Container(object):
         if errorCode != 0:
             return []
         jsonData = json.loads(output)
-        lenRepository = lenTag = 0
+        lenRepository = lenTag = lenSize = 0
         items = {}
         for item in jsonData:
             repository = tag = '<none>'
@@ -178,15 +178,17 @@ class Container(object):
                 [created, _] = item['CreatedAt'].split("T")
                 size = math.floor(item['Size']/1000000)
                 items[itemName] = {'idShort': item['Id'][:12], 'repository': repository, 'tag': tag, 'created': created, 'size': size}
+            if len(str(size)) > lenSize:
+                lenSize = len(str(size))
         results = []
-        formatFields = f"{{repository:<{lenRepository}}}  {{tag:<{lenTag}}}  {{id:12}}  {{created:10}}  {{size}}"
+        formatFields = f"{{repository:<{lenRepository}}} {{tag:<{lenTag}}} {{id:12}} {{created:10}} {{size:>{lenSize+1}}}"
         for item in items:
             label = formatFields.format(
                         repository=items[item]['repository'],
                         tag = items[item]['tag'],
                         id = items[item]['idShort'],
                         created = items[item]['created'],
-                        size = str(items[item]['size'])+' MB',
+                        size = str(items[item]['size']),
             )
             results.append((label, item, items[item]['repository']))
         return (results, formatFields)
