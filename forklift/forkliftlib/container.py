@@ -15,9 +15,6 @@ import csv
 import json
 import subprocess
 
-from forkliftlib.menu     import Menu
-from forkliftlib.inputBox import InputBox
-
 
 class Container(object):
     def __init__(self, path=''):
@@ -48,7 +45,7 @@ class Container(object):
         if platforms:
             element = platforms[0]
             tail = platforms[1:]
-            (errorCode, _) = self.__exec(f"{element} --version 2>/dev/null")
+            (errorCode, _) = self.__exec(f"{element} --version")
             if errorCode == 0:
                 self.__isValid = True
                 self.__platform = element
@@ -60,14 +57,18 @@ class Container(object):
 
 
     # @return (int, string) [returnCode, outputMessage]
-    def __exec(self, command=None):
+    def __exec(self, command=None, stderr=None):
         try:
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=None, shell=True, universal_newlines=True)
-            output, _ = process.communicate()
-            return (process.returncode, output)
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=stderr, shell=True, universal_newlines=True)
+            outputStream, errorStream = process.communicate()
+            if not errorStream:
+                errorStream=''
+            return (process.returncode, outputStream+errorStream)
         except subprocess.CalledProcessError as E:
             return (-1, str(E))
-    
+    def __execShell(self, command=None):
+        pass
+
     # Manually loading yaml files sucks but I really want to avoid every single extra dependency (now using stdbase lib only)
     def __loadFile(self, filename=None):
         result = {}
@@ -125,21 +126,26 @@ class Container(object):
             results.append((label, items[item]['id'], items[item]['name'], items[item]['state']))
         return (results, formatFields)
 
+    def cmdStart(self, containerID=''):
+        return f"{self.__platform} start -ai {containerID}"
 
-    def Stop(self, containerID=None):
-        (_, output) = self.__exec(f"{self.__platform} stop {containerID}")
+    def cmdLog(self, containerID=''):
+        return f"{self.__platform} logs {containerID} | less"
+
+    def Stop(self, containerID=''):
+        (_, output) = self.__exec(f"{self.__platform} stop {containerID}", stderr=subprocess.PIPE)
         return output.strip()
 
-    def Kill(self, containerID=None):
-        (_, output) = self.__exec(f"{self.__platform} kill {containerID} 2>&1")
+    def Kill(self, containerID=''):
+        (_, output) = self.__exec(f"{self.__platform} kill {containerID}", stderr=subprocess.PIPE)
         return output.strip()
 
-    def Rename(self, containerID=None, nameNew=None):
-        (_, output) = self.__exec(f"{self.__platform} rename {containerID} {nameNew}")
+    def Rename(self, containerID='', nameNew=None):
+        (_, output) = self.__exec(f"{self.__platform} rename {containerID} {nameNew}", stderr=subprocess.PIPE)
         return output.strip()
 
-    def Remove(self, containerID=None):
-        (errorCode, output) = self.__exec(f"{self.__platform} rm {containerID} 2>&1")
+    def Remove(self, containerID=''):
+        (errorCode, output) = self.__exec(f"{self.__platform} rm {containerID}", stderr=subprocess.PIPE)
         return (errorCode, output.strip())
 
     def containerProfilesList(self):
@@ -192,16 +198,16 @@ class Container(object):
 
     def imageRename(self, imageIDOld=None, imageNameNew=None):
         if not imageIDOld:
-            return (-1, '')
-        (returnCode, output) = self.__exec(f"{self.__platform} tag '{imageIDOld}' '{imageNameNew}' 2>&1")
+            return 'Cannot rename from an empty image name'
+        (_, output) = self.__exec(f"{self.__platform} tag '{imageIDOld}' '{imageNameNew}'", stderr=subprocess.PIPE)
         if output.strip()=='':
-            (returnCode, output) = self.imageDelete(imageID=imageIDOld)
+            (_, output) = self.imageRemove(imageID=imageIDOld)
             if output.lower().startswith("untagged:"):          # I'm not interested in output message like: 'Untagged: ...'
-                return (0, '')
-        return (returnCode, output.strip())
+                return ''
+        return output.strip()
 
-    def imageDelete(self, imageID=None):
+    def imageRemove(self, imageID=None):
         if not imageID:
             return (-1, '')
-        (errorCode, output) = self.__exec(f"{self.__platform} rmi {imageID} 2>&1")
+        (errorCode, output) = self.__exec(f"{self.__platform} rmi {imageID}", stderr=subprocess.PIPE)
         return (errorCode, output.strip())
