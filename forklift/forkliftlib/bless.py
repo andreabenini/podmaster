@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 #
 # @project      Bless: your favorite CLI/GUI library for quick applications
-# @author       ben
+# @author       Andrea Benini
+# @date         2023-11-07
+# @license      GNU Affero General Public License v3.0
 # @version      1.0
 #
 # @description  Have you had enough of fighting against curses ? Bless is the answer.
