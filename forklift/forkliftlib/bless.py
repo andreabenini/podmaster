@@ -65,6 +65,12 @@ KEY = {
     "PAGE_UP":      '\x1b[5~',
     "PAGE_DOWN":    '\x1b[6~',
 }
+KEY_REMAP = {       # KEY set remapping for specific terminals
+    "screen-256color": {    # tmux, screen-256color
+        "HOME":         '\x1b[1~',      
+        "END":          '\x1b[4~',
+    }
+}
 def KEYname(key=None):
     for item in KEY:
         if KEY[item] == key:
@@ -76,6 +82,7 @@ class bless():
     def __init__(self, init=False):
         self.__cursor = True
         self.__screenGetInfo()
+        self.__screenKeyRemap()
         self.color(Foreground=WHITE, Background=BLACK)
         if init:
             self.init()
@@ -84,8 +91,15 @@ class bless():
     def __screenGetInfo(self):
         terminal = shutil.get_terminal_size()
         self.__posX = self.__posY = 1
-        self.__X = terminal.columns
-        self.__Y = terminal.lines
+        self.__X    = terminal.columns
+        self.__Y    = terminal.lines
+        self.__term = os.environ.get("TERM")
+    # Remap keys when dealing with different $TERM terminals
+    def __screenKeyRemap(self):
+        for term in KEY_REMAP:
+            if term == self.__term:
+                for key in KEY_REMAP[term]:
+                    KEY[key] = KEY_REMAP[term][key]
 
     # Init screen
     def init(self, clear=True):
@@ -158,8 +172,8 @@ class bless():
     def keyGet(self):
         fd = sys.stdin.fileno()
         oldSettings = termios.tcgetattr(fd)
-        key = None
         try:
+            key = None
             tty.setraw(fd)
             key = sys.stdin.read(1)
             if key == '\x1b':           # <esc> key or escape sequence
