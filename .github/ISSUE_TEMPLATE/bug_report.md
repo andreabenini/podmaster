@@ -27,6 +27,8 @@ If applicable, add screenshots to help explain your problem.
  - OS: [e.g. Arch Linux]
  - shell or installed packages
  - Version [e.g. 22]
+ - tmux/screen/...
+ - $TERM environment
 
 **Additional context**
 Add any other context about the problem here.
