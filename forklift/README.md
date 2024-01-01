@@ -13,20 +13,18 @@ It doesn't really matter if you are a Developer, a DevOps or a SRE;
 most of your time might be spent on the CLI for deleting/respawning/starting
 new instances for your favorite product.  
 You can surely do it from a GUI or editor (vscode, eclipse, ...)
-but it might be messy if you're managing them remotely through SSH and 
-all you have at your disposal is just your trusty text-only shell connection.  
+but it might be messy if you're managing them remotely through SSH and all
+you have at your disposal is just your trusty text-only shell connection.  
 
-That's the reason for this simple, quick, text-only curses based utility,
-no matter if containers are running on a remote machine, locally or if you
-prefer a specific Window Manager.
+That's the reason for this simple, quick, text-only utility,
+no matter if containers are running on a remote machine, locally or if
+you prefer a specific Window Manager.
 I expressly don't want to rely on X11/Wayland, infinite dependencies 
-(or keep them to the bare minimum) and it has to be text-only and usable from
-a remote shell.  
-This utility relies on: python and curses bindings (just plain curses,
-no extra widgets required).  
+and it has to be text-only and usable in a remote shell. This utility is a
+pure python built, no extra deps at all.  
 It is not a fully fledged solution but rather a small and quick tool for
-running boring tasks, you'll still use docker/podman of your choice but you
-don't want to be annoyed by usual and repetitive commands
+running boring tasks, you'll still use docker/podman of your choice but
+you don't want to be annoyed by usual and repetitive commands
     (`docker ps -a; docker kill <ID>; docker start <ID> <params, ...>`).
 That's what this utility is about.
 
@@ -39,15 +37,14 @@ https://github.com/andreabenini/podmaster/assets/9632086/198ac4c7-416a-4217-89c6
 - Basic container images management: create (manually/script), rename, delete
 - Container management: create, run, attach, stop, kill, rename, log
 - Running locally or on a remote SSH connection, text only, no GUI required
-- Curses based GUI utility with just a few keys: cursor arrows, enter, escape
-- **NOT** related to Kubernetes, orchestrators or pods, just "simple" containers.  
+- Pure python based GUI utility with just a few keys: cursor arrows, enter, escape
+- **NOT** related to Kubernetes, orchestrators or pods, just _"simple"_ containers.  
     Targeted to personal workstations and workflows, no matter if local or on a
     remote ssh shell
-- python-curses is the only requirement, no extra deps, no curses library
-    widgets. Everything builtin and self contained in the project
-- _.yaml_ based user configuration
-- Container engine independent, tested on: **_docker, podman_**. LXD might be the next
-    if someone requires it
+- Everything is builtin and self contained in the project, no deps, just pure python3
+- _.yaml_ based user configuration (without pyyaml dep !)
+- Container engine independent, tested on: **_docker, podman_**. LXD might be
+    the next if someone requires it
 - Build images and container from within the utility, ContainerCommander like style
 
 
@@ -75,10 +72,10 @@ options:
 
 ## Installation and configuration
 
-- Requirements: _'python3'_ and _'python curses'_ are required, nothing else. There's **no need** for a VirtualEnv
+- Requirements: _'python3'_ is the only requirement, nothing else. There's **_no need_** for a VirtualEnv
 - Installation methods:
-    1. Download just `forklift.app` file and use it as a standalone application. Python and curses needs to be
-    available in your system but nothing else is really needed. This compact executable contains everything,
+    1. Download just `forklift.app` file and use it as a standalone application. Python3 is the only thing
+    you needs in your system, nothing else. This compact executable contains **everything**,
     add optional .yaml files if you need them _(see below)_
     2. From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
     this site. Clone the repo or download sources from there
