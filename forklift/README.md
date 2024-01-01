@@ -74,11 +74,13 @@ options:
 
 - Requirements: _'python3'_ is the only requirement, nothing else. There's **_no need_** for a VirtualEnv
 - Installation methods:
-    1. Download just `forklift.app` file and use it as a standalone application. Python3 is the only thing
+    1. Just download `forklift.app` file and use it as a standalone application. Python3 is the only thing
     you needs in your system, nothing else. This compact executable contains **everything**,
     add optional .yaml files if you need them _(see below)_
     2. From source [the official repository](https://github.com/andreabenini/podmaster/tree/main/forklift),
-    this site. Clone the repo or download sources from there
+    this site. Clone the repo or download sources from there. `forklift|forklift.py` is the classic python3
+    application with full sources provided in its modules, `forklift.app` is a onefile, standalone and self
+    contained app, it's still based on python3 but it's easy to move it elsewhere.
     3. ~~from **_pip_**~~: 
         ~~`pip install forklift/podmaster`~~
         **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
@@ -105,6 +107,29 @@ options:
     ~$ forklift
     # ~$ forklift.app       # If you're using the minified version
     ```
+
+
+## Deploy and execute on remote machines
+Copying the application elsewhere or executing it in a remote machine (or cluster) is pretty
+straightforward.  
+Small utilities with a small footprint are always preferred to a bigger boilerplate with redundant
+functions that can be reproduced with readymade tools.  
+There's no need for a little utility like this to implement remote shell execution tasks easily attachable
+with RSA keys and your trusty SSH connection, for the same reason keeping its footprint as small as
+possible is always preferred to adding extra features for a tool that it's conceived mostly for personal
+usage.  
+However an answer to this recurring question might be conceived and fulfilled with a small script, from
+now supplied as an official part of this repository, script is called `remote.execute.sh` and it basically
+lets you control and execute forklift on a remote machine. I still prefer a terminal multiplexer utility
+(**tmux** is my personal favorite, **screen** and others works well too) and keep this program on remote,
+if you need to give it a shot elsewhere this might still be a nice idea for you, it basically:  
+- copies (scp) `forklift.app` (full self contained) on the remote host
+- execute it directly there (through ssh)
+- delete it from remote once done
+
+Feel free to edit that simple `remote.execute.sh` and adapt it to your needs. Having a correct 
+`.ssh/authorized_keys` file in place on remote hosts helps you a lot if you want to avoid authentication
+requests each single time. Feel free to share your experiences or submit MRs for it.
 
 
 ## Contributing
