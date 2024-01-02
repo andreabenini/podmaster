@@ -119,7 +119,7 @@ with RSA keys and your trusty SSH connection, for the same reason keeping its fo
 possible is always preferred to adding extra features for a tool that it's conceived mostly for personal
 usage.  
 However an answer to this recurring question might be conceived and fulfilled with a small script, from
-now supplied as an official part of this repository, script is called `remote.execute.sh` and it basically
+now supplied as an official part of this repository, script is called `[remote.execute.sh](remote.execute.sh)` and it basically
 lets you control and execute forklift on a remote machine. I still prefer a terminal multiplexer utility
 (**tmux** is my personal favorite, **screen** and others works well too) and keep this program on remote,
 if you need to give it a shot elsewhere this might still be a nice idea for you, it basically:  
@@ -127,7 +127,7 @@ if you need to give it a shot elsewhere this might still be a nice idea for you,
 - execute it directly there (through ssh)
 - delete it from remote once done
 
-Feel free to edit that simple `remote.execute.sh` and adapt it to your needs. Having a correct 
+Feel free to edit that simple `[remote.execute.sh](remote.execute.sh)` and adapt it to your needs. Having a correct 
 `.ssh/authorized_keys` file in place on remote hosts helps you a lot if you want to avoid authentication
 requests each single time. Feel free to share your experiences or submit MRs for it.
 
