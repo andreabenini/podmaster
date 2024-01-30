@@ -66,8 +66,6 @@ class Container(object):
             return (process.returncode, outputStream+errorStream)
         except subprocess.CalledProcessError as E:
             return (-1, str(E))
-    def __execShell(self, command=None):
-        pass
 
     # Manually loading yaml files sucks but I really want to avoid every single extra dependency (now using stdbase lib only)
     def __loadFile(self, filename=None):
