@@ -11,8 +11,8 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='0.5.1'
-CODENAME='Byakhee'
+VERSION='1.0.0'
+CODENAME='Cthulhu'
 
 import os
 import sys
@@ -106,11 +106,18 @@ class ForkliftSystem(object):
                 (' Rename',         'rename'),
                 (' Remove',         'remove'),
         ])
-        selection = menu.Display(Caption=f"[{Name}]", Footer=f'Status: {Status}', ItemWidth=70, Lines=8, X=10, Y=8)
+        menu.itemAdd((" <<---"+self.__screen.textCenter(Text="[[ custom action ]]", Size=68-12)+"--->>", 'custom'))    # Empirically bigger than first option
+        selection = menu.Display(Caption=f"[{Name}]", Footer=f'Status: {Status}', ItemWidth=70, Lines=9, X=10, Y=8)
         if selection==-1:
             return
         (_, action) = menu.items[selection]
-        if action=='log':
+        if action == 'custom':                        # custom action, suggesting attach as a sample
+            userAction = self.__screen.editBox(Title=f'custom action to execute', Footer='<ENTER>.Confirm <ESC>.Cancel', Size=200, Y=10,
+                                               DefaultValue=self.__container.platform+f' exec -it {ID} /bin/bash')
+            if userAction.value:
+                self.__exec(Command=userAction.value)
+            return
+        elif action=='log':
             self.__exec(Command=self.__container.cmdLog(containerID=ID))
             return
         elif action=='start':
