@@ -2,6 +2,26 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.0] - 2023-12-28 [*Cthulhu*] LTS
+First stable LTS version.
+#### Added
+- New custom action on Container Menu for attaching demonized containers
+  or executing custom commands on them.
+#### Changed
+- Auto adapting windows on containers/images creation
+#### Fixed
+- Extensive testing for a month, no problems emerged ever since, marking
+  this version as the first available stable LTS version.
+#### To Do
+- pypi version it's still on testing phase and hatchling need few tweaks,
+  please use github repo version at the moment. Still a WiP because I'm
+  simply focusing on releasing just a single executable, this will be the
+  final step before v1.0
+- future releases in the 0.x branch will be considered as bugfixes, first
+  stable will be labeled as 1.x
+---
+
+
 ## [0.5.1] - 2023-12-28 [*Byakhee*]
 Pre-release before first stable LTS, no extra features, bug fixing only.
 #### Added
