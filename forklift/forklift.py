@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='1.0.0'
+VERSION='1.0.1'
 CODENAME='Cthulhu'
 
 import os
@@ -64,8 +64,9 @@ class ForkliftSystem(object):
 
     def __exec(self, Command=''):
         self.__screen.pause()
-        subprocess.run(Command, shell=True)
+        result = subprocess.run(Command, shell=True)
         self.__screen.restore()
+        return result.returncode
 
     def __containerNew(self):
         cwdMessage = '\n'+str(os.getcwd())+'\n'+(' '*42)+'\n'
@@ -121,7 +122,16 @@ class ForkliftSystem(object):
             self.__exec(Command=self.__container.cmdLog(containerID=ID))
             return
         elif action=='start':
-            self.__exec(Command=self.__container.cmdStart(containerID=ID))
+            # Start
+            if Status.lower() != 'running':
+                self.__exec(Command=self.__container.cmdStart(containerID=ID))
+                return
+            # Attach
+            for guessedShell in self.__container.containerShellList:
+                result = self.__exec(Command=self.__container.cmdAttach(containerID=ID)+' '+guessedShell)
+                if result == 0:
+                    return
+            self.__screen.messageBox(Title='E R R O R', Message=f'\nCannot detect a suitable shell for attaching to this container\n[{", ".join(self.__container.containerShellList)}]\n\n{ID}\n', Footer=MSG_ANY_KEY, Color=(bless.WHITE, bless.RED))
             return
         elif action=='stop':
             title = f'Stopping {Name}'

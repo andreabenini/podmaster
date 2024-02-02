@@ -31,6 +31,9 @@ class Container(object):
     def platformList(self):             # Currently supported container engines
         return ['podman', 'docker']
     @property
+    def containerShellList(self):
+        return ['/bin/bash', '/bin/ksh', '/bin/dash', '/bin/sh']
+    @property
     def valid(self):
         return self.__isValid
     @property

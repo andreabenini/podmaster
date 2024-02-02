@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.1] - 2023-12-28 [*Cthulhu*] LTS
+Start/Attach commands auto detection on containers.
+#### Added
+- [ Start - Attach ] container command now detects the running status and
+  uses _start -ai_ or _exec -it_ accordingly.
+- Shell  auto detection on container _Attach_ action, there is no need to
+  execute a manual command for it (but still available just in case).
+  Possible shell list from container class as an attribute.
+#### Changed
+- Start/Attach container action, different commands run based on status
+---
+
+
 ## [1.0.0] - 2023-12-28 [*Cthulhu*] LTS
 First stable LTS version.
 #### Added
