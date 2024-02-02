@@ -127,6 +127,9 @@ class Container(object):
     def cmdStart(self, containerID=''):
         return f"{self.__platform} start -ai {containerID}"
 
+    def cmdAttach(self, containerID=''):
+        return f"{self.__platform} exec -it {containerID}"
+
     def cmdLog(self, containerID=''):
         return f"{self.__platform} logs {containerID} | less"
 
