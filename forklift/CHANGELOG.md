@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.2] - 2024-02-27 [*Cthulhu*] LTS
+Start/Attach commands auto detection on containers.
+#### Added
+- [ Inspect ] container command to detect running options and arguments
+  passed to a running container. Piping to less for comfortable reading.
+---
+
+
 ## [1.0.1] - 2023-12-28 [*Cthulhu*] LTS
 Start/Attach commands auto detection on containers.
 #### Added

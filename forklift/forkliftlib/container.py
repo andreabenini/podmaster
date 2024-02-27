@@ -136,6 +136,9 @@ class Container(object):
     def cmdLog(self, containerID=''):
         return f"{self.__platform} logs {containerID} | less"
 
+    def cmdInspect(self, containerID=''):
+        return f"{self.__platform} inspect {containerID} | less"
+
     def Stop(self, containerID=''):
         (_, output) = self.__exec(f"{self.__platform} stop {containerID}", stderr=subprocess.PIPE)
         return output.strip()

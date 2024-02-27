@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='1.0.1'
+VERSION='1.0.2'
 CODENAME='Cthulhu'
 
 import os
@@ -104,11 +104,12 @@ class ForkliftSystem(object):
                 (' Stop',           'stop'),
                 (' Kill',           'kill'),
                 (' Logs',           'log'),
+                (' Inspection',     'inspect'),
                 (' Rename',         'rename'),
                 (' Remove',         'remove'),
         ])
         menu.itemAdd((" <<---"+self.__screen.textCenter(Text="[[ custom action ]]", Size=68-12)+"--->>", 'custom'))    # Empirically bigger than first option
-        selection = menu.Display(Caption=f"[{Name}]", Footer=f'Status: {Status}', ItemWidth=70, Lines=9, X=10, Y=8)
+        selection = menu.Display(Caption=f"[{Name}]", Footer=f'Status: {Status}', ItemWidth=70, Lines=10, X=10, Y=8)
         if selection==-1:
             return
         (_, action) = menu.items[selection]
@@ -120,6 +121,9 @@ class ForkliftSystem(object):
             return
         elif action=='log':
             self.__exec(Command=self.__container.cmdLog(containerID=ID))
+            return
+        elif action=='inspect':
+            self.__exec(Command=self.__container.cmdInspect(containerID=ID))
             return
         elif action=='start':
             # Start
