@@ -2,10 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 
-## [1.0.3] - 2024-02-27 [*Cthulhu*] LTS
+## [1.0.3] - 2024-07-15 [*Cthulhu*] LTS
 Handy storage information at your disposal
 #### Added
-- [ System ] Menu. adding option "Storage Information" for displaying
+- [ System ] Menu. adding option: _"Storage Information"_ for displaying
   local disk storage information _(space is not infinite)_.
 ---
 
@@ -13,7 +13,7 @@ Handy storage information at your disposal
 ## [1.0.2] - 2024-02-27 [*Cthulhu*] LTS
 Start/Attach commands auto detection on containers.
 #### Added
-- [ Inspect ] container command to detect running options and arguments
+- [ Inspect ]  container command to detect running options and arguments
   passed to a running container. Piping to less for comfortable reading.
 ---
 
