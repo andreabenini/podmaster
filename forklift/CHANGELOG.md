@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.3] - 2024-02-27 [*Cthulhu*] LTS
+Handy storage information at your disposal
+#### Added
+- [ System ] Menu. adding option "Storage Information" for displaying
+  local disk storage information _(space is not infinite)_.
+---
+
+
 ## [1.0.2] - 2024-02-27 [*Cthulhu*] LTS
 Start/Attach commands auto detection on containers.
 #### Added

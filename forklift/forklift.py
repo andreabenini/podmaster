@@ -298,8 +298,9 @@ class ForkliftSystem(object):
         self.__screen.text(Text=f'Program $EDITOR         "{self.__editor}"', X=6, Y=6)
         self.__screen.text(Text=f'Container runtime       "{self.__container.platform}"', X=6, Y=7)
         menu = self.__screen.menu(Items=[
-            ('Edit container build profiles    <containers.yaml>', 'containers'),
-            ('Edit image build profiles        <images.yaml>',     'images'),
+            ('Storage Information',                                 'storageinfo'),
+            ('Edit container build profiles    <containers.yaml>',  'containers'),
+            ('Edit image build profiles        <images.yaml>',      'images'),
             ('Exit Program', 'exit'),
         ])
         selection = menu.Display(X=6, Y=10, Keys=["LEFT"])
@@ -307,13 +308,15 @@ class ForkliftSystem(object):
             pass
         elif selection == -2:           # Left (goto tab left)
             self.__tabCurrent = 1
-        elif selection == 0:            # Edit containers.yaml
+        elif selection == 0:            # Display Storage Information
+            self.__exec(Command=self.__container.cmdStorageInformation()+'; echo -en "\nPress any key to continue..."; read -n 1 junk')
+        elif selection == 1:            # Edit containers.yaml
             self.__editFile(self.__container.filecontainers)
             self.__container.LoadContainers()
-        elif selection == 1:            # Edit images.yaml
+        elif selection == 2:            # Edit images.yaml
             self.__editFile(self.__container.fileimages)
             self.__container.LoadImages()
-        elif selection == 2:            # Exit
+        elif selection == 3:            # Exit
             self.__Exit = True
 
 def main():                             # Entry point for the package (when installed from pip)

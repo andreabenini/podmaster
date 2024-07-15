@@ -127,6 +127,9 @@ class Container(object):
             results.append((label, items[item]['id'], items[item]['name'], items[item]['state']))
         return (results, formatFields)
 
+    def cmdStorageInformation(self):
+        return f"{self.__platform} system df -v"
+
     def cmdStart(self, containerID=''):
         return f"{self.__platform} start -ai {containerID}"
 
