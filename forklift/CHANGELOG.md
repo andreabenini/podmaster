@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.0.4] - 2024-07-16 [*Cthulhu*] LTS
+Image rebuild option
+#### Added
+- [ Rebuild ] image option, new item in the image menu.  
+  Spending time rebuilding  images usually means deleting current active
+  and  create immediately a new one shortly after, this option does  the
+  same with just one command.
+---
+
+
 ## [1.0.3] - 2024-07-15 [*Cthulhu*] LTS
 Handy storage information at your disposal
 #### Added

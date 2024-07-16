@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='1.0.3'
+VERSION='1.0.4'
 CODENAME='Cthulhu'
 
 import os
@@ -172,7 +172,7 @@ class ForkliftSystem(object):
             return
         self.__screen.messageBox(Title=title, Message=f'\n{message}\n', Footer=MSG_ANY_KEY, Color=colors)
 
-    def __imageNew(self):
+    def __imageNew(self, dryrun=False):
         cwdMessage = '\n'+str(os.getcwd())+'\n'+(' '*42)+'\n'
         menuSize   = self.__screen.textGetColMax(cwdMessage)
         menu = self.__screen.menu(Color=COLOR)
@@ -184,34 +184,36 @@ class ForkliftSystem(object):
         self.__screen.messageBox(Title='Current directory', Message=cwdMessage, X=19, Y=4, Color=(bless.WHITE, bless.BLACK), Height=15, Keypress=False)
         selection = menu.Display(X=21, Y=8, Caption='Create new image from profile', Lines=10, ItemWidth=menuSize, Footer='<ESC>.Cancel')
         if selection == -1:                                         # Abort
-            return
+            return None
         elif selection == len(menu.items)-1:                        # Edit images.yaml file
             self.__editFile(self.__container.fileimages)
             self.__container.LoadImages()
-            return
+            return None
         elif selection == len(menu.items)-2:                        # Free manual input
             value = self.__container.platform+' build -t IMAGENAME_HERE CONTAINERFILE_DIR'
-        else:
+        else:                                                       # Build an image from the list
             value = list(images)[selection][1]
-        # Edit parameters before executing them
+        # Edit image parameters before building it
         self.__screen.messageBox(Width=self.__screen.cols, Height=512//(self.__screen.cols-2)+7, Y=13, X=1, Color=(bless.WHITE, bless.BLACK), Keypress=False)
         cliCommand = self.__screen.editBox(Title='Input parameters for image creation (edit and adapt your own)', Color=COLOR, Footer2=os.getcwd(),
                                            DefaultValue=value, Y=15, Size=512, Width=self.__screen.cols-2, Footer='<ENTER>.Confirm <ESC>.Cancel')
         if cliCommand.value:                                        # UI on hold and execute command
-            self.__exec(cliCommand.value+'; echo -en "\n\nPress any key to continue..."; read -n 1 junk')
+            command = cliCommand.value+'; echo -en "\n\nPress any key to continue..."; read -n 1 junk'
+            if not dryrun:
+                self.__exec(command)
+            return command
 
     def __imageEdit(self, ID=None, name=''):
         if not ID:
             return
         colors = COLOR
         menu = self.__screen.menu(Color=colors, Items=[
-                (f'Rename "{name}"', 'rename'),
-                (f'Remove "{name}"', 'remove'),
+                (f'Rename   "{name}"', 'rename'),
+                (f'Remove   "{name}"', 'remove'),
+                (f'Rebuild  "{name}"', 'rebuild'),
         ])
         selection = menu.Display(Caption=f"[{ID}]", Footer=' Images action menu  <ESC>.Exit ', ItemWidth=70, Lines=7, X=10, Y=8)
-        if selection == -1:
-            return
-        elif selection == 0:                                    # Rename
+        if selection == 0:                                      # Rename
             imageNew = self.__screen.editBox(Title='New name for the image', Footer='<ENTER>.Confirm <ESC>.Cancel', Size=100, DefaultValue=name, Y=10)
             if imageNew.value:
                 newName = imageNew.value.replace(' ', '')       # Removing spaces, if any
@@ -222,8 +224,7 @@ class ForkliftSystem(object):
                 else:
                     title='Image Renamed'
                     message=f'New name: \n"{newName}"\n'+(' '*18)
-            else:
-                return
+                self.__screen.messageBox(Title=title, Message=f'\n{message}\n', Footer=MSG_ANY_KEY, Color=colors)
         elif selection == 1:                                    # Remove
             confirm = self.__screen.confirmBox(Title="Confirm Image Deletion", Message=f"\nDelete image            \n'{ID}'\n",
                                                Color=(bless.BLACK, bless.YELLOW), MessageButtons=[' Yes ', ' No '], ButtonSelected=1)
@@ -235,11 +236,18 @@ class ForkliftSystem(object):
                     title   = 'E R R O R'
                     colors  = (bless.WHITE, bless.RED)
                     message = self.__screen.textWrap(Text=message, Max=60)
-            else:
-                return
-        else:
-            return
-        self.__screen.messageBox(Title=title, Message=f'\n{message}\n', Footer=MSG_ANY_KEY, Color=colors)
+                self.__screen.messageBox(Title=title, Message=f'\n{message}\n', Footer=MSG_ANY_KEY, Color=colors)
+        elif selection == 2:                                    # Rebuild
+            buildImageCommand = self.__imageNew(dryrun=True)
+            if buildImageCommand:
+                (returnCode, message) = self.__container.imageRemove(imageID=ID)
+                if returnCode == 0:
+                    self.__exec(buildImageCommand)
+                else:
+                    title   = 'E R R O R'
+                    colors  = (bless.WHITE, bless.RED)
+                    message = self.__screen.textWrap(Text=message, Max=60)
+                    self.__screen.messageBox(Title=title, Message=f'\n{message}\n', Footer=MSG_ANY_KEY, Color=colors)
 
     def __StatusInit(self):
         self.__tabCurrent  = 0
