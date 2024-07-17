@@ -81,9 +81,13 @@ options:
     this site. Clone the repo or download sources from there. `forklift|forklift.py` is the classic python3
     application with full sources provided in its modules, `forklift.app` is a onefile, standalone and self
     contained app, it's still based on python3 but it's easy to move it elsewhere.
-    3. ~~from **_pip_**~~: 
-        ~~`pip install forklift/podmaster`~~
-        **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
+    3. ~~from **_pip_**~~:  
+        ~~`pip install forklift/podmaster`~~  
+        ### Major Update:
+        - **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
+        - I've just received the `forklift` name from PyPi repository
+        (https://pypi.org/)  
+        - I'm now building a suitable self contained executable that can be delivered and installed with `pip`
 - **_[Optional]_** Set `$EDITOR` environment variable in your favorite shell. If you have a working
     environment with *$EDITOR* set in place you can directly edit **`.yaml`** configuration files
     from the utility
