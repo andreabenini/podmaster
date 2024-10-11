@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='1.0.4'
+VERSION='1.0.4r2'
 CODENAME='Cthulhu'
 
 import os
@@ -302,16 +302,15 @@ class ForkliftSystem(object):
         self.__screen.text(Text=f'Forklift v              '+'"'*(len(CODENAME)+2), X=6, Y=3)
         self.__screen.text(Text=VERSION,  X=16, Y=3, Color=(bless.CYAN,   (1,1)))
         self.__screen.text(Text=CODENAME, X=31, Y=3, Color=(bless.YELLOW, (1,1)))
-        self.__screen.text(Text=f'System environment      $EDITOR variable is '+('set' if self.__editor!='' else 'not set'), X=6, Y=5)
-        self.__screen.text(Text=f'Program $EDITOR         "{self.__editor}"', X=6, Y=6)
-        self.__screen.text(Text=f'Container runtime       "{self.__container.platform}"', X=6, Y=7)
+        self.__screen.text(Text=f'System $EDITOR var      "{(self.__editor if self.__editor!='' else 'is not set')  }"', X=6, Y=5)
+        self.__screen.text(Text=f'Container runtime       "{self.__container.platform}"', X=6, Y=6)
         menu = self.__screen.menu(Items=[
             ('Storage Information',                                 'storageinfo'),
             ('Edit container build profiles    <containers.yaml>',  'containers'),
             ('Edit image build profiles        <images.yaml>',      'images'),
             ('Exit Program', 'exit'),
         ])
-        selection = menu.Display(X=6, Y=10, Keys=["LEFT"])
+        selection = menu.Display(X=6, Y=9, Keys=["LEFT"])
         if selection == -1:             # Escape, reload menu
             pass
         elif selection == -2:           # Left (goto tab left)

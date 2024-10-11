@@ -9,6 +9,7 @@ Image rebuild option
   Spending time rebuilding  images usually means deleting current active
   and  create immediately a new one shortly after, this option does  the
   same with just one command.
+- [ System ]  Just a line for information about current $EDITOR variable
 ---
 
 
