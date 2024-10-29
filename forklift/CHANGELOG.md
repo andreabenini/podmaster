@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 
-## [1.0.4] - 2024-07-16 [*Cthulhu*] LTS
+## [1.0.4r2] - 2024-07-16 [*Cthulhu*] LTS
 Image rebuild option
 #### Added
 - [ Rebuild ] image option, new item in the image menu.  
@@ -10,6 +10,8 @@ Image rebuild option
   and  create immediately a new one shortly after, this option does  the
   same with just one command.
 - [ System ]  Just a line for information about current $EDITOR variable
+#### Fixed
+- [ System ]  Minor python syntax version fix (python 3.11 and 3.12)
 ---
 
 
