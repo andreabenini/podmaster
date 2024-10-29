@@ -302,7 +302,7 @@ class ForkliftSystem(object):
         self.__screen.text(Text=f'Forklift v              '+'"'*(len(CODENAME)+2), X=6, Y=3)
         self.__screen.text(Text=VERSION,  X=16, Y=3, Color=(bless.CYAN,   (1,1)))
         self.__screen.text(Text=CODENAME, X=31, Y=3, Color=(bless.YELLOW, (1,1)))
-        self.__screen.text(Text=f'System $EDITOR var      "{(self.__editor if self.__editor!='' else 'is not set')  }"', X=6, Y=5)
+        self.__screen.text(Text=f'System $EDITOR var      "{(self.__editor if self.__editor!="" else "is not set")}"', X=6, Y=5)
         self.__screen.text(Text=f'Container runtime       "{self.__container.platform}"', X=6, Y=6)
         menu = self.__screen.menu(Items=[
             ('Storage Information',                                 'storageinfo'),
