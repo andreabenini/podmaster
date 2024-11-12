@@ -1,0 +1,8 @@
+apiVersion: clusterops.io/v1alpha1
+kind: ClusterConfig
+metadata:
+  name: myCluster
+spec:
+  addons:
+    - metrics-server
+    - dashboard
