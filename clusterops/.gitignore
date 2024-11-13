@@ -1,0 +1,10 @@
+# Project specific files
+
+# External sources, needs to be merged here
+contrib
+
+# work in progress scripts
+scripts
+
+# tmp
+tmp.*
