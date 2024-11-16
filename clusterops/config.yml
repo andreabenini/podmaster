@@ -15,6 +15,7 @@ spec:
 #  storage:
 #    provider: longhorn
   addons:
-    - metrics-server
-    - dashboard
+    - dashboard:            # Install latest kubernetes dashboard (CNCF default)
+        url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    - metrics-server        # Install the builtin metrics server
     # - ingress-nginx
