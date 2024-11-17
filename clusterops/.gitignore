@@ -3,6 +3,10 @@
 # External sources, needs to be merged here
 contrib
 
+# Binaries
+kubebuilder
+src/clusterops
+
 # work in progress scripts
 scripts
 
