@@ -1,14 +1,16 @@
+![ClusterOps logo](icon.png)
+
 # ClusterOps
 
-**ClusterOps** is a Kubernetes operator designed to streamline the initial configuration and 
-ongoing maintenance of kubernetes clusters. The focus of this project is primarily on personal
-or local installations. However, the goal is to expand its use to encompass all installations
-of Kubernetes for local development purposes.  
-It simplifies cluster management by automating tasks and providing a user-friendly YAML-based
+**ClusterOps** is a Kubernetes installer and operator designed to streamline the initial configuration
+and ongoing maintenance of kubernetes clusters. The focus of this project is primarily on personal
+or local installations. However, the goal is to expand its use to encompass all installations of
+Kubernetes for local development purposes.  
+It simplifies cluster management by automating tasks and providing just a user-friendly YAML-based
 configuration.
 
 
-## Features
+## Overview
   * **Simplified Configuration:** Define your desired cluster state in a simple YAML file, 
     and ClusterOps will handle the rest.
   * **Automated Setup:**  Automates initial k3s cluster configuration, including network settings,
@@ -23,25 +25,39 @@ configuration.
     on several parts and use this tool only for what is needed.
 
 
-## Getting Started
+## Features
+- **distribution and engine independent**. Install your favorite kubernetes engine with your package manager,
+execute **_one_** script and you have a complete working environment in your desktop at your disposal.  
+- **Zero config** approach. One single _config.yaml_ file with installation requirements
+(add/remove features): human readable, plain and simple. All fancy configs managed automatically
+(ingress, balancers, services, proxy, ...).
+- **Kubernetes official dashboard** installed, others planned too (k9s for example).
+- **Kubevirt** plugin installed and properly configured.  Unleash the power of classic virtualization
+(KVM+QEMU) on top of Kubernetes and manage your entire system from there, _libvirtd_ and _virsh_ libs
+required.
+- _**One operator** to rule them all_. The installation script configures your machine automatically
+during installation and adds one kubernetes operator to manage your local cluster. From there the
+operator takes care of the cluster on your behalf.
+- Easy installation and removal. Test it and once done just uninstall everything without leaving traces
+(or pods) behind
 
+
+## Getting Started
 ### Prerequisites
   * A running kubernetes cluster, k3s is tested and supported at the moment.
   * `kubectl` installed and configured to interact with your cluster.
-
 ### Installation
+<!--
 1.  **Deploy the ClusterOps Operator:**
-<!-- end operations list -->
+end operations list
 ```yaml
 # Work in progress here...
-#kubectl apply -f https://raw.githubusercontent.com/andreabenini/podmaster/clusterops/main/deploy/operator.yaml
 ```
 2.  **Create a `ClusterConfig` CRD:**
 Define your desired cluster configuration in a YAML file (e.g., `config.yaml`). See the example below for available options.
 ```yaml
 # TO BE DEFINED
 ```
-<!--
 apiVersion: clusterops.io/v1alpha1
 kind: ClusterConfig
 metadata:
@@ -54,14 +70,9 @@ spec:
   addons:
     - metrics-server
     - ingress-nginx
--->
 3.  **Apply the `ClusterConfig`:**
-<!-- end list -->
-```yaml
-kubectl apply -f config.yaml
-```
-
-ClusterOps will automatically configure your cluster based on the provided configuration.
+-->
+_work in progress..._
 
 ## ClusterConfig Options
 The `ClusterConfig` CRD allows you to define various aspects of your cluster configuration.
