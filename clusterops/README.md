@@ -26,61 +26,50 @@ configuration.
 
 
 ## Features
-- **distribution and engine independent**. Install your favorite kubernetes engine with your package manager,
-execute **_one_** script and you have a complete working environment in your desktop at your disposal.  
+- **distribution and engine independent**. Install your favorite kubernetes engine with your package
+manager, execute **_one_** script and you'll have a complete working environment in the system at
+your disposal.  
 - **Zero config** approach. One single _config.yaml_ file with installation requirements
 (add/remove features): human readable, plain and simple. All fancy configs managed automatically
 (ingress, balancers, services, proxy, ...).
-- **Kubernetes official dashboard** installed, others planned too (k9s for example).
+- **Kubernetes official dashboard** installed as a plugin, others planned too (k9s for example).
 - **Kubevirt** plugin installed and properly configured.  Unleash the power of classic virtualization
-(KVM+QEMU) on top of Kubernetes and manage your entire system from there, _libvirtd_ and _virsh_ libs
-required.
+(KVM+QEMU) on top of Kubernetes and manage your entire system from there, _libvirtd_ and _virsh_
+libs are required.
 - _**One operator** to rule them all_. The installation script configures your machine automatically
 during installation and adds one kubernetes operator to manage your local cluster. From there the
 operator takes care of the cluster on your behalf.
-- Easy installation and removal. Test it and once done just uninstall everything without leaving traces
+- Clean installation and removal. Just test it, once done uninstall everything without leaving configs
 (or pods) behind
-
-
-## Getting Started
-### Prerequisites
-  * A running kubernetes cluster, k3s is tested and supported at the moment.
-  * `kubectl` installed and configured to interact with your cluster.
-### Installation
-<!--
-1.  **Deploy the ClusterOps Operator:**
-end operations list
-```yaml
-# Work in progress here...
-```
-2.  **Create a `ClusterConfig` CRD:**
-Define your desired cluster configuration in a YAML file (e.g., `config.yaml`). See the example below for available options.
-```yaml
-# TO BE DEFINED
-```
-apiVersion: clusterops.io/v1alpha1
-kind: ClusterConfig
-metadata:
-  name: my-cluster
-spec:
-  network:
-    plugin: calico
-  storage:
-    provider: longhorn
-  addons:
-    - metrics-server
-    - ingress-nginx
-3.  **Apply the `ClusterConfig`:**
+<!--TODOs
+- Integrated local docker/podman registry
+- Other distributions: debian, suse, rocky/rhel, gentoo
+- Other engines: minicube, KIND, vanilla k8s, CRC
+- Source2Image utility
+- Monitoring features, alerting and telegram notifications
+- NVidia CUDA support for GPUs
+- Remote storage, network volumes, object storage
 -->
-_work in progress..._
+
+
+## Getting Started: Installation/Removal
+- Prerequisite: `kubectl` CLI utility installed to interact with your cluster.
+- See [README](doc/README.md) for details on installation or removal, basically this is valid for
+each kubernetes engine and consists of two parts:
+  - Install your favorite kubernetes engine with the system defined package manager.
+  - Edit your `config.yaml` file to suit your needs (addons plugins, cluster info, virtuazionation).
+  - Oneliner instruction to configure it all, from this command an operator will be installed in the
+  cluster and will automatically manage everything for you. More or less something like: 
+  `./clusterctl --os=YourDistroName install`  
+  See [README](doc/README.md) for installation/uninstallation details.
+
 
 ## ClusterConfig Options
 The `ClusterConfig` CRD allows you to define various aspects of your cluster configuration.
-<!--
-Here are some of the key options:
+<!-- some options:
   * **network:** Configure the network plugin (e.g., `calico`, `flannel`).
   * **storage:**  Specify the storage provider (e.g., `longhorn`, `openebs`).
-  * **addons:**  A list of addons to install (e.g., `metrics-server`, `ingress-nginx`).
+  * **addons:**  A list of addons to install (e.g., `dashboard`, `metrics-server`, `ingress-nginx`).
   * **security:**  Define security settings (e.g., enable pod security policies).
   * **monitoring:**  Configure monitoring tools (e.g., Prometheus, Grafana).
 -->
@@ -95,4 +84,3 @@ fork the project or ping the author for further requests.
 ## License
 This project is licensed under the _Affero GPLv3 License_, see the
 [LICENSE](./LICENSE) file for details.
-
