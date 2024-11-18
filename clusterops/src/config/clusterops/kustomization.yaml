@@ -1,0 +1,4 @@
+## Append yaml of your project ##
+resources:
+- config.yml
+# +kubebuilder:scaffold:manifestskustomizesamples

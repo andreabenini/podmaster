@@ -1,0 +1,27 @@
+# permissions for end users to edit clusterconfigs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: src
+    app.kubernetes.io/managed-by: kustomize
+  name: clusterconfig-editor-role
+rules:
+- apiGroups:
+  - app.my.domain
+  resources:
+  - clusterconfigs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - app.my.domain
+  resources:
+  - clusterconfigs/status
+  verbs:
+  - get
