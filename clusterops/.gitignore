@@ -3,9 +3,13 @@
 # External sources, needs to be merged here
 contrib
 
-# Binaries
+# Binaries and work temporary files
 kubebuilder
-src/clusterops
+src/.dockerignore
+src/.gitignore
+src/.golangci.yml
+src/Dockerfile
+
 
 # work in progress scripts
 scripts
