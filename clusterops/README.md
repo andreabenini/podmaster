@@ -32,6 +32,11 @@ your disposal.
 - **Zero config** approach. One single _config.yaml_ file with installation requirements
 (add/remove features): human readable, plain and simple. All fancy configs managed automatically
 (ingress, balancers, services, proxy, ...).
+- **Builtin ContainerHub**.  The default installation provides a fully configured ContainerHub
+installed locally along with the kubernetes installation. This configuration allows the user to
+build, upload and deploy custom container images as they were provided from an external source.
+Internet public sources are still available but local development can be kept in this localhost
+server. ClusterOps operator will be fetched from this ContainerHub registry.
 - **Kubernetes official dashboard** installed as a plugin, others planned too (k9s for example).
 - **Kubevirt** plugin installed and properly configured.  Unleash the power of classic virtualization
 (KVM+QEMU) on top of Kubernetes and manage your entire system from there, _libvirtd_ and _virsh_
@@ -42,10 +47,9 @@ operator takes care of the cluster on your behalf.
 - Clean installation and removal. Just test it, once done uninstall everything without leaving configs
 (or pods) behind
 <!--TODOs
-- Integrated local docker/podman registry
-- Other distributions: debian, suse, rocky/rhel, gentoo
-- Other engines: minicube, KIND, vanilla k8s, CRC
 - Source2Image utility
+- Add other distributions: debian, suse, rocky/rhel, gentoo
+- Other engines: minicube, KIND, vanilla k8s, CRC
 - Monitoring features, alerting and telegram notifications
 - NVidia CUDA support for GPUs
 - Remote storage, network volumes, object storage
