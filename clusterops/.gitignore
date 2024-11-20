@@ -3,8 +3,11 @@
 # External sources, needs to be merged here
 contrib
 
-# Binaries and work temporary files
+# Kubernetes Operator Builder
 kubebuilder
+# Kubevirt VM Manager
+virtctl*
+# Binaries and work temporary files
 src/.dockerignore
 src/.gitignore
 src/.golangci.yml
