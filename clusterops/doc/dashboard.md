@@ -23,6 +23,9 @@ deployment.apps/dashboard-metrics-scraper created
 echo http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 # Start proxy
 kubectl proxy
+# Less picky on user-agent...
+kubectl proxy --accept-hosts='^.*$'
+# Broad open on LAN, all interfaces
 # kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='^.*$'
 ```
 - Accessing dashboard from browsers outside local machine  
@@ -40,7 +43,7 @@ kubectl -n kubernetes-dashboard edit service kubernetes-dashboard
 Create `dashboard.yaml`
 ```yaml
 #
-# Dashboard configuration, apply recommended.yaml before and this later
+# Dashboard configuration, apply recommended.yaml (github kubernetes/dashboard) BEFORE, this file later
 #
 
 # Creating a service account [admin-user]
@@ -87,6 +90,11 @@ kubectl apply -f dashboard.yaml
 ```sh
 kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath={".data.token"} | base64 -d
 # kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+```
+- If you are experiencing token issues there might be a problem with it, try to regenerate a
+new one and use that instead to fix 401 Unauthorized Errors.
+```sh
+kubectl -n kubernetes-dashboard create token admin-user
 ```
 
 
