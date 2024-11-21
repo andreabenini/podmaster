@@ -1,0 +1,24 @@
+# docker and podman have the same syntax but podman is daemonless
+# and have less restrictions on unit requirements, see notes below
+[Unit]
+Description=Local ContainerHub Service
+# podman does NOT require a daemon for running containers, usual runlevels are fine
+# but docker needs it. Uncomment if you'd like to add these:
+#After=docker.service
+#Requires=docker.service
+Requires={serviceRequired}.service
+After={serviceRequired}.service
+
+[Service]
+#User={user}
+WorkingDirectory={path}
+ExecStart={runtime} run -p 5000:5000 --restart=always --name registry -v {volumeRegistry}:/var/lib/registry   docker.io/library/registry:2
+ExecStop={runtime}  stop -t 2 registry
+# optional items below
+Restart=always
+#Restart=on-failure
+#Type=simple|notify
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
