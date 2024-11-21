@@ -59,14 +59,30 @@ kubectl apply -f https://kubevirt.io/labs/manifests/vm.yaml
 ./virtctl start testvm
 #> VM testvm was scheduled to start
 
+# Stop a virtual machine, name:[testvm]
+./virtctl stop testvm
+
 # Get virtual machines information
 kubectl get vmi
 #> NAMESPACE     NAME     AGE   PHASE     IP           NODENAME   READY
 #> kube-system   testvm   55s   Running   10.42.0.17   n1         True
+kubectl get vmis
+#> NAME     AGE    PHASE     IP           NODENAME  READY
+#> testvm   2m6s   Running   10.42.0.17   n1        True
+
 kubectl get vm 
 #> NAME     AGE     STATUS    READY
 #> testvm   6m46s   Running   True
 
+# Get a list of VMs
+kubectl get vms -A
+#> NAME     AGE     STATUS    READY
+#> testvm   4m27s   Running   True
+
+# Delete a virtual machine
+kubectl delete vm testvm
+
+# this pod is linked to the VM named 'testvm'
 kubectl get pods -A | grep virt-launcher
 #> kube-system  virt-launcher-testvm-jggr2  3/3  Running  0  8m38s
 
