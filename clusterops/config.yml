@@ -20,11 +20,12 @@ spec:
 #  network:
 #    plugin: calico
 #  storage:
-#    provider: longhorn
+#    provider: ceph
 
   # Kubernetes configuration addons
   addons:
     - dashboard:            # Install latest kubernetes dashboard (CNCF default)
         url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    - kubevirt              # Add Kubevirt virtualization capabilities
     # - metrics-server        # Install the builtin metrics server
     # - ingress-nginx
