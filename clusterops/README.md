@@ -7,7 +7,7 @@ and ongoing maintenance of kubernetes clusters. The focus of this project is pri
 or local installations. However, the goal is to expand its use to encompass all installations of
 Kubernetes for local development purposes.  
 It simplifies cluster management by automating tasks and providing just one user-friendly YAML-based
-configuration.
+configuration [config.yml](config.yml).
 
 
 ## Overview
