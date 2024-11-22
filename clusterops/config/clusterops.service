@@ -10,8 +10,9 @@ Requires={serviceRequired}.service
 After={serviceRequired}.service
 
 [Service]
-#User={user}
+User={user}
 WorkingDirectory={path}
+ExecStartPre=-{runtime} rm --force registry
 ExecStart={runtime} run -p 5000:5000 --restart=always --name registry -v {volumeRegistry}:/var/lib/registry   docker.io/library/registry:2
 ExecStop={runtime}  stop -t 2 registry
 # optional items below
