@@ -1,8 +1,11 @@
+# Copy of the original config.yml file, not used but 
+# kept here for backup purposes
 apiVersion: app.my.domain/v1alpha1
 kind: ClusterConfig
 metadata:
   labels:
     app.kubernetes.io/name: src
+    # app.kubernetes.io/managed-by: kustomize
 
   # Kubernetes cluster name
   name: localCluster
@@ -16,8 +19,15 @@ metadata:
   uninstall: all
 
 spec:
+#  network:
+#    plugin: calico
+#  storage:
+#    provider: ceph
+
   # Kubernetes configuration addons
   addons:
     - dashboard:            # Install latest kubernetes dashboard (CNCF default)
         url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
     - kubevirt              # Add Kubevirt virtualization capabilities
+    # - metrics-server        # Install the builtin metrics server
+    # - ingress-nginx
