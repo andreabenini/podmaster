@@ -11,7 +11,7 @@ as a binary, you don't need to install it manually
     mkdir src; cd src
 
     # Create/Init a project
-    # --repo option must be provided or it won't work
+    # --repo option must be provided or it will not work
     # '--domain example.com' is optional
     ../kubebuilder init --repo github.com/andreabenini/podmaster/clusterops/src
 
@@ -53,7 +53,7 @@ as a binary, you don't need to install it manually
     - Change the `Makefile` (_docker-build_) section, I advise against that
     - Revert back to older syntax by changing container registry behavior
       ```txt
-      cat <<EOT > 01-registries-configuration.conf
+      cat <<EOT > 01-containerhub.conf
       unqualified-search-registries = ["localhost:5000", "docker.io"]
 
       [[registry]]
