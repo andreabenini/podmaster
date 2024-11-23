@@ -7,14 +7,15 @@ contrib
 kubebuilder
 # Kubevirt VM Manager
 virtctl*
+
+# Local configuration files, can be ignored
+config/setup.yaml
+
 # Binaries and work temporary files
 src/.dockerignore
 src/.gitignore
 src/.golangci.yml
 src/Dockerfile
-
-# Local configuration files, can be ignored
-config/setup.yaml
 
 # work in progress scripts
 scripts
