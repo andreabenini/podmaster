@@ -48,6 +48,10 @@ operator takes care of the cluster on your behalf.
 uninstall everything without leaving configs (or pods) behind.
 
 
+### Rolling demo overview
+https://github.com/user-attachments/assets/d28ab4ab-77fb-4a16-899d-26d6c582bb0a
+
+
 ## Planned features _(Wishlist / TODOs)_
 - **Containerized Data Importer (CDI)**. Persistent storage management add-on for Kubernetes to
 provide a declarative way of building and importing Virtual Machine Disks on PVCs for 
