@@ -13,8 +13,8 @@ metadata:
   # uninstall method
   #     all       - Remove everything: containers, configs, binary package
   #     container - Uninstall containers
-  #     config    - Uninstall containers AND kubernetes configs
-  #     binaries  - Uninstall binary installation package ONLY through package manager
+  #     config    - Uninstall containers, kubernetes configs
+  #     binaries  - Uninstall binary installation packages [ONLY], through package manager
   #     none      - Do nothing, do not uninstall (default)
   uninstall: all
 
