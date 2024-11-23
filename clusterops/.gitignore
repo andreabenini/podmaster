@@ -13,6 +13,8 @@ src/.gitignore
 src/.golangci.yml
 src/Dockerfile
 
+# Local configuration files, can be ignored
+config/setup.yaml
 
 # work in progress scripts
 scripts
