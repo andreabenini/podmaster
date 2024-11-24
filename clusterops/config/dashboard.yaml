@@ -25,12 +25,13 @@ subjects:
     namespace: kubernetes-dashboard
 
 ---
-# Assign secret token to [admin-user]
-apiVersion: v1
-kind: Secret
-metadata:
-  name: admin-user
-  namespace: kubernetes-dashboard
-  annotations:
-    kubernetes.io/service-account.name: "admin-user"
-type: kubernetes.io/service-account-token
+# Not needed, commenting it out but it can also be removed
+# # Assign secret token to [admin-user]
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: admin-user
+#   namespace: kubernetes-dashboard
+#   annotations:
+#     kubernetes.io/service-account.name: "admin-user"
+# type: kubernetes.io/service-account-token
