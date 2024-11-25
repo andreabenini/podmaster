@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# @description      clusterctl - Kubernetes cluster friendly CLI utility
+#
+# @author           Andrea Benini
+# @date             2024-11-20
+# @license          GNU Affero General Public License v3.0
+# @see              CLI utility for managing local kubernetes installation
+#
+# pyright: reportMissingImports=false
+#
+VERSION='0.1.0'
+CODENAME='Attila'
+
+import os
+import sys
+try:
+    import yaml
+    import stat
+    import requests
+    import argparse
+    import subprocess
+    from   clusterops.system     import System
+    from   clusterops.kubernetes import Kubernetes
+except Exception as E:
+    print(f"Error while importing modules:\n{str(E)}\nAborting program\n\n")
+    sys.exit(1)
+
+
+class clusterController(object):
+    def __init__(self, config=None, command=None, kubernetes=None, osType=None):
+        try:
+            # Loading default configuration
+            self.config = System.LoadYAML(config)
+            self.config.setdefault("metadata", {})
+            self.config["metadata"].setdefault("uninstall", "none")
+            self.config["metadata"].setdefault("name", "default")
+            self.config.setdefault("spec", {})
+            self.config["spec"].setdefault("addons", {})
+            self.kubernetes = Kubernetes(engine=kubernetes, osType=osType)
+            # Execute the desired command
+            if command == 'install':
+                self.install()
+            elif command == 'remove':
+                self.remove()
+            else:
+                raise Exception(f"Invalid command: {command}")
+        except KeyboardInterrupt:
+            System.Exit(exit=0, Prepend='')
+        except Exception as E:
+            System.Exit(str(E))
+
+    def __ExecFunction(self, methodName):
+        method = System.MethodName(object=self.kubernetes, method=methodName)
+        if method:
+            method(self.config)
+        else:
+            System.Exit(f"method '{methodName}()' unsupported at the moment")
+
+
+    def install(self):
+        # Mandatory installation components
+        self.__ExecFunction(f"install_{self.kubernetes.os}_{self.kubernetes.engine}")
+        self.kubernetes.install_kubebuilderUtility()
+        self.kubernetes.install_clusteropsService()
+        # Optional components, mostly based on config.yml
+        for item in self.config['spec']['addons']:
+            if type(item) == str:
+                name = item
+            elif type(item) == dict and len(item)>0:
+                name = list(item)[0]
+            else:
+                name = None
+            if name == 'dashboard':
+                self.kubernetes.install_KubernetesDashboard(item[name])
+            elif name == 'kubevirt':
+                self.kubernetes.install_KubernetesKubeVirt()
+        # Operator installation
+        self.kubernetes.install_KubernetesOperator()
+        print(f'\n{System.Line()}\n<   -=-   -=-   -=-   -=-    Installation Completed    -=-   -=-   -=-   -=-   >\n')
+
+
+    def remove(self):
+        if self.config['metadata']['uninstall'] == 'none':
+            System.Exit(Message="Disinstallation not required, 'uninstall' has been set to 'none' in the config file", Prepend='', exit=0)
+        print(f"\nRemoving kubernetes configuration, parameter 'uninstall' set to '{self.config['metadata']['uninstall']}', this will:")
+        if self.config['metadata']['uninstall'] in ('config', 'all'):
+            print(f'    - remove personal configuration ~/.kube/config and {self.kubernetes.engine} configuration files')
+            print(f'    - remove ContainerHub service daemon')
+            print(f'    - remove kubernetes plugins and traefik controller')
+            print(f'    - drain the node by deleting all containers and configs')
+        if self.config['metadata']['uninstall'] in ('binaries', 'all'):
+            print(f'    - uninstall {self.kubernetes.engine} package from {self.kubernetes.os}')
+        if not System.Confirm(f"\nDo you really want to continue [y|N] ? "):
+            System.Exit(exit=0, Prepend='')
+        print()
+        # Remove system containers and base configuration
+        if self.config['metadata']['uninstall'] in ('config', 'all'):
+            self.kubernetes.remove_clusteropsService()
+            for item in self.config['spec']['addons']:
+                if type(item) == str:
+                    name = item
+                elif type(item) == dict and len(item)>0:
+                    name = list(item)[0]
+                else:
+                    name = None
+                if name == 'dashboard':
+                    self.kubernetes.remove_KubernetesDashboard(item[name])
+                elif name == 'kubevirt':
+                    self.kubernetes.remove_KubernetesKubeVirt()
+            self.kubernetes.remove_drainKubernetes()
+            self.__ExecFunction(f"remove_{self.kubernetes.os}_{self.kubernetes.engine}_configuration")
+
+        # Remove binaries and installation
+        if self.config['metadata']['uninstall'] in ('binaries', 'all'):
+            self.__ExecFunction(f"remove_{self.kubernetes.os}_{self.kubernetes.engine}_binaries")
+        print(f'\n{System.Line()}\n<   -=-   -=-   -=-   -=-     Installation Removed     -=-   -=-   -=-   -=-   >\n')
+
+
+def main():                             # Entry point for the package (when installed from pip)
+    System.ForbidRootExecution()
+    configFile = System.programPath + os.path.sep + 'config.yml'
+    parser = argparse.ArgumentParser(description='Kubernetes cluster friendly CLI utility', epilog=f" ", formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('-o', '--os',         dest='ostype',     required=True, choices=['arch'], help=f"Underlying operating system: [arch]")
+    parser.add_argument('-k', '--kubernetes', dest='kubernetes', default="k3s", choices=['k3s'],  help=f"Kubernetes orchestration engine [default: k3s]")
+    parser.add_argument('-c', '--config',     dest='config',     default=configFile, help=f"Cluster configuration file   [default: {os.path.basename(configFile)}]")
+    parser.add_argument('-d', '--dry-run', action='store_true',  help="Perform a trial run with no changes made")
+    parser.add_argument("command", choices=["install","remove"], help="The command to execute.")
+    argument = parser.parse_args()
+    System.dryrun = argument.dry_run
+    clusterController(config=argument.config, command=argument.command, kubernetes=argument.kubernetes, osType=argument.ostype)
+if __name__ == "__main__":
+    main()
