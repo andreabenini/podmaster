@@ -27,6 +27,10 @@ spec:
   addons:
     - dashboard:            # Install latest kubernetes dashboard (CNCF default)
         url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    # - k9:                   # Install k9 dashboard
     - kubevirt              # Add Kubevirt virtualization capabilities
     # - metrics-server        # Install the builtin metrics server
     # - ingress-nginx
+    # - cuda                  # Enable Nvidia GPU CUDA support for containers
+    # - vulkan                # Enable AMD GPU support through Vulkan libraries
+    # - cloudmanager          # Add k8s Cloud Controller Manager for offloading services and workload
