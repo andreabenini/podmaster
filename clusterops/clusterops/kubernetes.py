@@ -18,7 +18,7 @@ from .system import System
 
 class Kubernetes():
     def __init__(self, engine='', osType='', homeConfigFile='~/.kube/config'):
-        self._homeconfigfile = homeConfigFile
+        self.__homeconfigfile = homeConfigFile
         self.__containerRegistry = 'registry'
         self.__volumeRegistry = 'clusterops-registry'
         self.__setKubernetesEngine(engineName=engine)           # k3s, minikube, kind, ...
@@ -27,10 +27,10 @@ class Kubernetes():
         self.__fileService = self.__dirConfig + "clusterops.service"
         self.__systemdService = '/etc/systemd/system/clusterops.service'
         self.__loadConfig()
-        self._os = osType
+        self.__os = osType
     @property                       # Operating system: arch, suse, debian, rhel, gentoo, ...
     def os(self):
-        return self._os
+        return self.__os
     @property                       # Kubernetes engine type: k3s, minikube, kind, ...
     def engine(self):
         return self._engine
@@ -150,7 +150,7 @@ class Kubernetes():
         if not os.path.exists(self.__dirConfig+'dashboard.yaml'):
             System.Exit(f"Dashboard configuration file '{self.__dirConfig+'dashboard.yaml'}' does not exists")
         System.Exec(f'kubectl apply -f {config["url"]}', printOutput=True)
-        System.Exec(f'kubectl apply -f {self.__dirConfig+'dashboard.yaml'}', printOutput=True)
+        System.Exec(f'kubectl apply -f {self.__dirConfig+"dashboard.yaml"}', printOutput=True)
         print()
 
 
@@ -209,6 +209,13 @@ class Kubernetes():
 
     # Install and configure K3S on Arch Linux
     def install_arch_k3s(self, config):
+        self.__install_generic_k3s(config=config)
+
+    # Install and configure K3S on SUSE Linux related OSes
+    def install_suse_k3s(self, config):
+        self.__install_generic_k3s(config=config)
+
+    def __install_generic_k3s(self, config):
         # Starting k3s for the first time to generate k3s.yaml
         (_,_,status) = System.Exec('systemctl is-active k3s')
         if status!=0:
@@ -240,7 +247,7 @@ class Kubernetes():
     # Create kubernetes configuration for the user by taking it from the cluster installation
     def __install_kubernetesConfiguration(self, kubernetesConfigurationFile, config):
         print("- Kubernetes user configuration file setup")
-        homeConfigurationFile = os.path.expanduser(self._homeconfigfile)
+        homeConfigurationFile = os.path.expanduser(self.__homeconfigfile)
         System.Exec(f'mkdir -p {os.path.dirname(homeConfigurationFile)}')
         if os.path.exists(homeConfigurationFile):
             (_,_,status) = System.Exec(f'sudo diff {kubernetesConfigurationFile} {homeConfigurationFile}')
@@ -296,7 +303,7 @@ class Kubernetes():
             System.Exit("Dashboard configuration url not found, please add it to the config.yml file\nERROR: parameter: {'url': 'https://kubernetes.dashboard/url'}, see examples")
         if not os.path.exists(self.__dirConfig+'dashboard.yaml'):
             System.Exit(f"Dashboard configuration file '{self.__dirConfig+'dashboard.yaml'}' does not exists")
-        System.Exec(f'kubectl delete -f {self.__dirConfig+'dashboard.yaml'}', printOutput=True)
+        System.Exec(f'kubectl delete -f {self.__dirConfig+"dashboard.yaml"}', printOutput=True)
         System.Exec(f'kubectl delete -f {config["url"]}', printOutput=True)
         print()
 
@@ -352,11 +359,30 @@ class Kubernetes():
 
     # [ARCH] Removing possible configurations from filesystem
     def remove_arch_k3s_configuration(self, config):
+        self.__remove_generic_k3s_configuration(config=config)
+
+    # [SUSE] Removing possible configurations from filesystem
+    def remove_suse_k3s_configuration(self, config):
+        self.__remove_generic_k3s_configuration(config=config)
+
+    # Default configuration removal
+    def __remove_generic_k3s_configuration(self, config):
         pathETC        = "/etc/rancher/k3s"
         pathSYSCTL     = "/etc/sysctl.d/k3s.conf"
         pathKUBECONFIG = os.getenv("HOME")+os.path.sep+'.kube'
         System.Exec(f'sudo rm -rf {pathKUBECONFIG} {pathETC} {pathSYSCTL}')
 
+
     # [ARCH] Removing binaries and uninstalling packages
     def remove_arch_k3s_binaries(self, config):
         System.Exec("sudo pacman -Rsn --noconfirm k3s-bin", printOutput=True)
+
+    # [SUSE] Removing binaries, no binaries provided for suse
+    def remove_suse_k3s_binaries(self, config):
+        self.__remove_generic_k3s_binaries(config=config)
+
+    # Official method of removing binaries with classic installation: "curl -sfL https://get.k3s.io | sh -"
+    def __remove_generic_k3s_binaries(self, config):
+        # No installation package, manual uninstall of all leftovers
+        System.Exec(f'sudo /usr/local/bin/k3s-killall.sh')
+        System.Exec(f'sudo /usr/local/bin/k3s-uninstall.sh')
