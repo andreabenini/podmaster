@@ -213,6 +213,11 @@ class Kubernetes():
 
     # Install and configure K3S on SUSE Linux related OSes
     def install_suse_k3s(self, config):
+        # Fixing crappy apparmor location, mostly on tumbleweed/openSUSE
+        # When apparmor_parser is installed is getting wrong information when it's executed
+        #   from a regular user, having it in the same apparmor dir seems to solve this issue
+        System.Exec("sudo ln -s /usr/local/bin/k3s /usr/sbin/k3s")      # /usr/sbin is where apparmor is
+        # now standard install
         self.__install_generic_k3s(config=config)
 
     def __install_generic_k3s(self, config):
@@ -234,12 +239,12 @@ class Kubernetes():
         print(f"- Configuration completed\n")
         # Display kubernetes cluster information
         print(f"[Cluster Information]")
-        System.Exec('kubectl cluster-info', printOutput=True)
+        System.Exec('sudo k3s kubectl cluster-info', printOutput=True)
         (stdout,_,status) = System.Exec('sleep 2 && kubectl get nodes 2>&1')    # Check if this output is displayed
         print(f"[Nodes] ({status})\n{stdout}\n")
         print("[k3s check-config]")
         System.Keypress()
-        System.Exec('k3s check-config', printOutput=True)
+        System.Exec('sudo k3s check-config', printOutput=True)
         print("     apparmor error here reported is expected when apparmor is not installed or configured")
         print("")
 
@@ -386,3 +391,5 @@ class Kubernetes():
         # No installation package, manual uninstall of all leftovers
         System.Exec(f'sudo /usr/local/bin/k3s-killall.sh')
         System.Exec(f'sudo /usr/local/bin/k3s-uninstall.sh')
+        # Removing custom locations
+        System.Exec("sudo rm -rf /usr/sbin/k3s")        # See install_suse_k3s() for details
