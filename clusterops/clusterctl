@@ -10,7 +10,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='0.1.0'
+VERSION='0.1.1'
 CODENAME='Attila'
 
 import os
@@ -122,7 +122,7 @@ def main():                             # Entry point for the package (when inst
     System.ForbidRootExecution()
     configFile = System.programPath + os.path.sep + 'config.yml'
     parser = argparse.ArgumentParser(description='Kubernetes cluster friendly CLI utility', epilog=f" ", formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-o', '--os',         dest='ostype',     required=True, choices=['arch'], help=f"Underlying operating system: [arch]")
+    parser.add_argument('-o', '--os',         dest='ostype',     required=True, choices=['arch','suse'], help=f"Underlying operating system: [arch|suse]")
     parser.add_argument('-k', '--kubernetes', dest='kubernetes', default="k3s", choices=['k3s'],  help=f"Kubernetes orchestration engine [default: k3s]")
     parser.add_argument('-c', '--config',     dest='config',     default=configFile, help=f"Cluster configuration file   [default: {os.path.basename(configFile)}]")
     parser.add_argument('-d', '--dry-run', action='store_true',  help="Perform a trial run with no changes made")
