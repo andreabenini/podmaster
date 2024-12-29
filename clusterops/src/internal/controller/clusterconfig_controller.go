@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -48,6 +49,9 @@ type ClusterConfigReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *ClusterConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
     _ = log.FromContext(ctx)
+
+    fmt.Printf("Doing something useful here, now it's just a placeholder")		// TODO: Place your code here
+
     return ctrl.Result{}, nil
 }
 
