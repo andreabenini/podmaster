@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 
 
+
+
+## [1.0.4r3] - 2025-01-24 [*Cthulhu*] LTS
+Fixing regexps in container image names
+#### Fixed
+- [ Containers ]  Container image names  might contain  ":"  or might be
+  coming out from other registries (localhost:5000),  this will fix this
+  issue.
+- It's safe to replace 1.0.4r2 with this version
+---
+
+
 ## [1.0.4r2] - 2024-07-16 [*Cthulhu*] LTS
 Image rebuild option
 #### Added

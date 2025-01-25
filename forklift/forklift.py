@@ -11,7 +11,7 @@
 #
 # pyright: reportMissingImports=false
 #
-VERSION='1.0.4r2'
+VERSION='1.0.4r3'
 CODENAME='Cthulhu'
 
 import os

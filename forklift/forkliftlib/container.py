@@ -176,8 +176,8 @@ class Container(object):
             repository = tag = '<none>'
             if 'Names' in item and len(item['Names'])>0:
                 for itemName in item['Names']:
-                    if len(itemName.split(":")) >= 2:
-                        [repository, tag] = itemName.split(":")
+                    if len(itemName.rsplit(":", 1)) >= 2:
+                        [repository, tag] = itemName.rsplit(":", 1)
                     if len(repository) > lenRepository:
                         lenRepository = len(repository)
                     if len(tag) > lenTag:
