@@ -1,0 +1,5 @@
+[ ] When using a dummy command to create a container there might be an error on it, it
+    comes handy to see stdout/stderr on failure. Just interrupt execution and show it
+[ ] Add a new option in "Create New Container" named: "create container from image".
+    That option pops out the image list and let the user select one from there.
+    Once selected create and editable prompt with standard commands before running it
