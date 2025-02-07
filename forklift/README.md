@@ -83,8 +83,7 @@ options:
     contained app, it's still based on python3 but it's easy to move it elsewhere.
     3. ~~from **_pip_**~~:  
         ~~`pip install forklift/podmaster`~~  
-        ### Major Update:
-        - **_(WORK IN PROGRESS, dealing the name with PyPi package maintainers)_**
+        - **_(WORK IN PROGRESS, please stand by. I'm dealing the name with PyPi package maintainers)_**
         - I've just received the `forklift` name from PyPi repository
         (https://pypi.org/)  
         - I'm now building a suitable self contained executable that can be delivered and installed with `pip`
