@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 
 
+## [1.0.4r4] - 2025-05-26 [*Cthulhu*] LTS
+Fixing regexps in container image names
+#### Fixed
+- [ Containers ]  Containers with no CMD but only ENTRYPOINT might raise
+  errors on container listing, fixing problem with an empty cmd instead.
+- It's safe to replace 1.0.4r3 with this version
+---
+
+
 ## [1.0.4r3] - 2025-01-24 [*Cthulhu*] LTS
 Fixing regexps in container image names
 #### Fixed

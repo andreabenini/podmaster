@@ -112,7 +112,7 @@ class Container(object):
                         'name': itemName,
                         'state': item['State'],
                         'createdat': item['CreatedAt'],
-                        'command': item['Command'][0][:20]
+                        'command': item['Command'][0][:20] if item['Command'] else ''
                     }
         formatFields = f"{{id:<12}}  {{image:<{lenImage}}}  {{name:<{lenName}}}  {{state:<7}}  {{createdAt:<20}} {{command}}"
         for item in items:
