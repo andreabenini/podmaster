@@ -41,6 +41,7 @@ GREY_DARK       = (90,  40)
 # Keys
 KEY = {
     "ENTER":        '\r',
+    "TAB":          '\t',
     "ESCAPE":       '\x1b',
     "BACKSPACE":    '\x7f',
     "F1":           '\x1bOP',
