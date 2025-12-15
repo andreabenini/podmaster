@@ -331,34 +331,99 @@ class bless():
         self.__box(X=X, Y=Y, Width=Width, Height=Height, Color=Color)
         self.__boxTitleFooter(Title=Title, Footer=Footer, X=X, Y=Y, Width=Width, Height=Height, Color=Color)
 
-    def __boxMessage(self, Message=None, X=1, Y=1, Color=None):
-        for line in Message.splitlines():
-            self.text(Text=str(line), Y=Y, X=X, Color=Color)
-            Y += 1
+    # __boxMessage() Display text content inside a box
+    # @param Message     (string)  Message to display
+    # @param X           (integer) Top left (X) for the [Message]
+    # @param Y           (integer) Top left (Y) for the [Message]
+    # @param Color       (color)   Foreground/background colors to apply
+    # @param firstLine   (integer) [optional] First line from [Message] to display
+    # @param firstColumn (integer) [optional] First char from each line from [Message] to display
+    # @param maxWidth    (integer) [optional] max width content
+    # @param maxHeight   (integer) [optional] max height content
+    def __boxMessage(self, Message=None, X=1, Y=1, Color=None, firstLine=0, firstColumn=0, maxWidth=0, maxHeight=0):
+        currentLine = Y
+        for line in Message.splitlines()[firstLine:]:
+            if maxWidth > 0:    # pad string and extract it from desired firstColumn
+                line = line[firstColumn:maxWidth+firstColumn]
+                line += " "*(maxWidth-len(line))
+            self.text(Text=str(line), Y=currentLine, X=X, Color=Color)
+            currentLine += 1
+            if maxHeight > 0 and currentLine-Y >= maxHeight:
+                return
 
+    # messageBox() Define a generic messagebox
+    # @param Title    (string)  Window title
+    # @param Message  (string)  Content of the window
+    # @param Footer   (string)  Footer Message, applied on the bottom left corner of the window
+    # @param Width    (string)  Window width
+    # @param Height   (string)  Window height
+    # @param X        (Integer) cursor top left placement for the window
+    # @param Y        (Integer) cursor top left placement for the window
+    # @param Color    (string)  foreground/background colors of the window
+    # @param Keypress (boolean) Add a keypress (default) or just display the window
+    #
+    # @see If window content is bigger than the window size cursor capabilities will be
+    #      added to the window allowing scrolling in all needed directions.
     def messageBox(self, Title=None, Message='', Footer=None, Width=None, Height=None, X=None, Y=None, Color=None, Keypress=True):
         if Color:
             Color = (Color[0][0], Color[1][1])
         else:
             Color = (self.__colorForeground, self.__colorBackground)
-        # Calculating: x, y, width, height, size
+        # Calculating: maxLines, maxWidth, x, y, width, height, size
+        keys = []
+        maxLines = Message.count('\n') + 1
+        maxWidth = 0
+        for line in Message.splitlines():
+            if maxWidth < len(line):
+                maxWidth = len(line)
         if not Width:
-            Width = 0
-            for line in Message.splitlines():
-                if Width < len(line):
-                    Width = len(line)
-            Width += 4
+            Width = maxWidth + 4
+        if (Width >= self.cols):
+            Width = self.cols-1
         if not Height:
-            Height = Message.count('\n')+1 + 2
+            Height = maxLines + 2
+        if (Height > self.rows):
+            Height = self.rows
         if not X:
             X = math.floor((self.cols-Width)/2) + 2
         if not Y:
             Y = math.floor((self.rows-Height)/2) + 1
         # Draw the box, title, footer, message
         self.box(Title=Title, Footer=Footer, X=X, Y=Y, Width=Width, Height=Height, Color=Color)
-        self.__boxMessage(Message=Message, X=X+2, Y=Y+1, Color=Color)
-        if Keypress:
-            self.keyPress()
+        currentLine = currentColumn = 0
+        self.__boxMessage(Message=Message, X=X+2, Y=Y+1, Color=Color, firstLine=currentLine, firstColumn=currentColumn, maxWidth=Width-4, maxHeight=Height-2)
+        # Detect if arrow keys are needed
+        if maxWidth > Width:
+            keys += [KEY['LEFT'], KEY['RIGHT']]
+            self.text(" \u2190 \u2192 ", X=X+Width-7, Y=Y, Color=Color)
+        if maxLines > Height:
+            keys += [KEY['UP'], KEY['DOWN']]
+            self.text("\u2191", X=Width+X-1, Y=Y+1, Color=Color)
+            self.text("\u2193", X=Width+X-1, Y=Y+Height-2, Color=Color)
+        # One shot (no arrow keys), just quit. Otherwise continue
+        if len(keys)==0:
+            if Keypress:
+                self.keyPress()
+            return
+        while True:
+            key = self.keyGet()
+            if key in keys:
+                if key == KEY['UP']:
+                    if currentLine > 0:
+                        currentLine -= 1
+                elif key == KEY['DOWN']:
+                    if currentLine <= maxLines-Height:
+                        currentLine += 1
+                elif key == KEY['LEFT']:
+                    if currentColumn > 0:
+                        currentColumn -= 1
+                elif key == KEY['RIGHT']:
+                    if currentColumn+Width-4 < maxWidth:
+                        currentColumn += 1
+                self.__boxMessage(Message=Message, X=X+2, Y=Y+1, Color=Color, firstLine=currentLine, firstColumn=currentColumn, maxWidth=Width-4, maxHeight=Height-2)
+            else:
+                return
+
 
     # @return (int) Selected button, starting from 0
     def confirmBox(self, Title=None, Message='', Footer=None, Width=None, Height=None, X=None, Y=None, Color=None, MessageButtons=['OK', 'Cancel'], ButtonSelected=0):
@@ -484,7 +549,7 @@ class _menu():
             self.__selected = len(self.__items) - 1
 
     # Display() Show the menu
-    def Display(self, X=1, Y=1, FirstItem=0, Caption=None, Footer=None, Lines=None, ItemWidth=None, Keys=[]):
+    def Display(self, X=1, Y=1, FirstItem=0, Caption=None, Footer=None, Lines=None, ItemWidth=None, Keys=[], freeKeys=[]):
         if not self.__items or len(self.__items) == 0:
             return -1
         (itemsNumber, itemsMaxWidth) = self.__itemsCalculate()
@@ -533,6 +598,8 @@ class _menu():
                     FirstItem = 0
             elif KEYname(key=key) in Keys:
                 return (-2 - Keys.index(KEYname(key)))
+            elif key in freeKeys:
+                return (-2 - len(Keys) - freeKeys.index(key))
 
 class _editBox():
     def __init__(self, screen=None, Title=None, Footer=None, Footer2=None, DefaultValue='', Size=100, Width=None, Height=None, X=1, Y=1, Color=None):
