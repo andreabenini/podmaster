@@ -25,10 +25,11 @@ spec:
 
   # Kubernetes configuration addons
   addons:
-    - dashboard:            # Install latest kubernetes dashboard (CNCF default)
-        url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
-    # - k9:                   # Install k9 dashboard
+    - containerhub          # local ContainerHub service (locally hosted, name: clusterops.service)
     - kubevirt              # Add Kubevirt virtualization capabilities
+
+    # TODO:
+    # - k9:                   # Install k9 dashboard
     # - metrics-server        # Install the builtin metrics server
     # - ingress-nginx
     # - cuda                  # Enable Nvidia GPU CUDA support for containers
