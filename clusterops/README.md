@@ -37,7 +37,6 @@ available locally along with the kubernetes installation. This configuration all
 build, upload and deploy custom container images as they were provided from external sources.
 Internet public sources are still available but local development can be kept in this localhost
 server. Builtin ClusterOps operator will be fetched from this ContainerHub registry too.
-- **Kubernetes official dashboard** installed as a plugin, others planned too (k9s for example).
 - **Kubevirt** plugin installed and properly configured.  Unleash the power of classic virtualization
 (KVM+QEMU) on top of Kubernetes and manage your entire system from there, _libvirtd_ and _virsh_
 libs are required.
