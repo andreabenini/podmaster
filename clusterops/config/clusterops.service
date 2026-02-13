@@ -6,8 +6,6 @@ Description=Local ContainerHub Service
 # but docker needs it. Uncomment if you'd like to add these:
 #After=docker.service
 #Requires=docker.service
-Requires={serviceRequired}.service
-After={serviceRequired}.service
 
 [Service]
 User={user}
