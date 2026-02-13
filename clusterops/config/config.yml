@@ -29,9 +29,8 @@ spec:
     - kubevirt              # Add Kubevirt virtualization capabilities
 
     # TODO:
-    # - k9:                   # Install k9 dashboard
+    # - ingress-nginx         # Enable gateway api ingress controllers
     # - metrics-server        # Install the builtin metrics server
-    # - ingress-nginx
     # - cuda                  # Enable Nvidia GPU CUDA support for containers
     # - vulkan                # Enable AMD GPU support through Vulkan libraries
     # - cloudmanager          # Add k8s Cloud Controller Manager for offloading services and workload
