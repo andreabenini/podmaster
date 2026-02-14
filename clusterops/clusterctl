@@ -32,12 +32,17 @@ class clusterController(object):
     def __init__(self, config=None, command=None, kubernetes=None, osType=None):
         try:
             # Loading default configuration
+            print(f"\n[Loading Setup]")
+            print(f"- Detecting current kubernetes configuration (--dry-run {System.dryrun})")
+            print(f"- Loading configuration file {config} ...")
             self.config = System.LoadYAML(config)
             self.config.setdefault("metadata", {})
             self.config["metadata"].setdefault("uninstall", "none")
             self.config["metadata"].setdefault("name", "default")
             self.config.setdefault("spec", {})
             self.config["spec"].setdefault("addons", {})
+            print(f"- Kubernetes engine: {kubernetes}")
+            print(f"- Operating system: {osType}")
             self.kubernetes = Kubernetes(engine=kubernetes, osType=osType)
             # Execute the desired command
             if command == 'install':
@@ -58,27 +63,30 @@ class clusterController(object):
         else:
             System.Exit(f"method '{methodName}()' unsupported at the moment")
 
-
-    def install(self):
-        # Mandatory installation components
-        self.__ExecFunction(f"install_{self.kubernetes.os}_{self.kubernetes.engine}")
-        self.kubernetes.install_kubebuilderUtility()
-        self.kubernetes.install_clusteropsService()
-        # Optional components, mostly based on config.yml
+    # Optional components, mostly based on config.yml
+    def __ComponentsLoop(self):
         for item in self.config['spec']['addons']:
             if type(item) == str:
-                name = item
+                yield item
             elif type(item) == dict and len(item)>0:
-                name = list(item)[0]
+                yield list(item)[0]
             else:
-                name = None
-            if name == 'dashboard':
-                self.kubernetes.install_KubernetesDashboard(item[name])
-            elif name == 'kubevirt':
+                yield None
+
+
+    def install(self):
+        if not System.Confirm(f"\nThis script will configure {self.kubernetes.engine} for your '{self.kubernetes.os} OS'\nUse --dry-run flag for a preview of what it does\n\nDo you really want to continue [y|N] ? "):
+            System.Exit(exit=0, Prepend='')
+        # Mandatory installation components, if any
+        self.__ExecFunction(f"install_{self.kubernetes.os}_{self.kubernetes.engine}")
+        for componentName in self.__ComponentsLoop():
+            if componentName == 'kubevirt':
                 self.kubernetes.install_KubernetesKubeVirt()
-        # Operator installation
-        self.kubernetes.install_KubernetesOperator()
-        print(f'\n{System.Line()}\n<   -=-   -=-   -=-   -=-    Installation Completed    -=-   -=-   -=-   -=-   >\n')
+            elif componentName == 'containerhub':
+                self.kubernetes.install_clusteropsService()
+            else:
+                System.Exit(f"- Component '{componentName}' is not actually supported")
+        System.Line(title="Installation Completed")
 
 
     def remove(self):
@@ -86,7 +94,7 @@ class clusterController(object):
             System.Exit(Message="Disinstallation not required, 'uninstall' has been set to 'none' in the config file", Prepend='', exit=0)
         print(f"\nRemoving kubernetes configuration, parameter 'uninstall' set to '{self.config['metadata']['uninstall']}', this will:")
         if self.config['metadata']['uninstall'] in ('config', 'all'):
-            print(f'    - remove personal configuration ~/.kube/config and {self.kubernetes.engine} configuration files')
+            print(f'    - remove personal configuration "{self.kubernetes.homeConfigFile}" and local "{self.kubernetes.engine}" configuration files')
             print(f'    - remove ContainerHub service daemon')
             print(f'    - remove kubernetes plugins and traefik controller')
             print(f'    - drain the node by deleting all containers and configs')
@@ -97,35 +105,32 @@ class clusterController(object):
         print()
         # Remove system containers and base configuration
         if self.config['metadata']['uninstall'] in ('config', 'all'):
-            self.kubernetes.remove_clusteropsService()
-            for item in self.config['spec']['addons']:
-                if type(item) == str:
-                    name = item
-                elif type(item) == dict and len(item)>0:
-                    name = list(item)[0]
-                else:
-                    name = None
-                if name == 'dashboard':
-                    self.kubernetes.remove_KubernetesDashboard(item[name])
-                elif name == 'kubevirt':
+            for componentName in self.__ComponentsLoop():
+                if componentName == 'kubevirt':
                     self.kubernetes.remove_KubernetesKubeVirt()
+                elif componentName == 'containerhub':
+                    self.kubernetes.remove_clusteropsService()
+                else:
+                    System.Exit(f"- Component '{componentName}' is not actually supported")
             self.kubernetes.remove_drainKubernetes()
             self.__ExecFunction(f"remove_{self.kubernetes.os}_{self.kubernetes.engine}_configuration")
 
         # Remove binaries and installation
         if self.config['metadata']['uninstall'] in ('binaries', 'all'):
             self.__ExecFunction(f"remove_{self.kubernetes.os}_{self.kubernetes.engine}_binaries")
-        print(f'\n{System.Line()}\n<   -=-   -=-   -=-   -=-     Installation Removed     -=-   -=-   -=-   -=-   >\n')
+        print(f"--> File {self.kubernetes.homeConfigFile} and its directory have been left intact")
+        print(f"    Remove them on your own if you don't need it anymore")
+        System.Line(title="Installation Removed")
 
 
 def main():                             # Entry point for the package (when installed from pip)
     System.ForbidRootExecution()
-    configFile = System.programPath + os.path.sep + 'config.yml'
-    parser = argparse.ArgumentParser(description='Kubernetes cluster friendly CLI utility', epilog=f" ", formatter_class=argparse.RawTextHelpFormatter)
+    configFile = System.configPath + os.path.sep + 'config.yml'
+    parser = argparse.ArgumentParser(description='Kubernetes cluster friendly CLI utility', epilog=System.epilogInfoTxt, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('-o', '--os',         dest='ostype',     required=True, choices=['arch','suse'], help=f"Underlying operating system: [arch|suse]")
     parser.add_argument('-k', '--kubernetes', dest='kubernetes', default="k3s", choices=['k3s'],  help=f"Kubernetes orchestration engine [default: k3s]")
     parser.add_argument('-c', '--config',     dest='config',     default=configFile, help=f"Cluster configuration file   [default: {os.path.basename(configFile)}]")
-    parser.add_argument('-d', '--dry-run', action='store_true',  help="Perform a trial run with no changes made")
+    parser.add_argument('-d', '--dry-run', action='store_true',  help="Perform a trial run, no changes made")
     parser.add_argument("command", choices=["install","remove"], help="The command to execute.")
     argument = parser.parse_args()
     System.dryrun = argument.dry_run
