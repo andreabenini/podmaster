@@ -13,6 +13,7 @@ import os
 import pty
 import sys
 import yaml
+import shutil
 import select
 import requests
 import subprocess
@@ -29,6 +30,10 @@ class SystemUtility():
             return os.path.dirname(os.path.realpath(sys.argv[0]))
         except IndexError:
             return os.getcwd()
+    # Current configuration full path
+    @property
+    def configPath(self):
+        return self.programPath + os.path.sep + 'config'
     # Dry-Run mode, system wide property
     @property
     def dryrun(self):
@@ -36,6 +41,18 @@ class SystemUtility():
     @dryrun.setter
     def dryrun(self, Value):
         self.__dryrun = Value
+
+    # Get current user
+    @property
+    def currentUser(self):
+        try:
+            return os.getlogin()
+        except OSError:
+            user = os.getenv('USER') or os.getenv('USERNAME') or os.environ.get('LOGNAME')
+            if user:
+                return user
+            else:
+                return os.getuid()
 
     # Detect root execution, abort script when detected
     def ForbidRootExecution(self, Message="You cannot run this script as root"):
@@ -50,7 +67,17 @@ class SystemUtility():
         except KeyboardInterrupt:
             pass
         return False
-    
+
+    # Read a file and return its contents
+    @property
+    def epilogInfoTxt(self):
+        try:
+            with open(self.configPath+os.path.sep+'info.txt', 'r') as f:
+                return f.read()
+        except FileNotFoundError:
+            pass
+        return ""
+
     # Press any key to continue method
     def Keypress(self, Message='Press any key to continue...'):
         import sys, tty, termios
@@ -64,10 +91,12 @@ class SystemUtility():
             termios.tcsetattr(fd, termios.TCSADRAIN, oldSettings)
 
     # Dummy console line available    
-    def Line(self, length=80):
-        return '-'*length
-    def PrintLine(self, length=80):
-        print(self.Line(length=length))
+    def Line(self, title=None, columns=0):
+        if columns==0:
+            size = shutil.get_terminal_size()   # Get the size of the terminal
+            columns = size.columns
+        line = '-' * columns
+        print(f"\n{line}\n{title.center(columns)}\n{line}\n")
 
     # Program exit with a message
     def Exit(self, Message='', Prepend='ERROR: ', exit=1):
@@ -95,7 +124,7 @@ class SystemUtility():
     def Exec(self, Command='', stdInput=None, printOutput=False, tty=False):
         try:
             if self.dryrun:
-                print("[[DRY-RUN]]  "+Command)
+                print("    [[DRY-RUN]]  "+Command)
                 return "", "", 0    # Dry-Run always succeeds but output is always empty
             
             # TTY allocated, read stdout in a totally different way because TTY is allocated, don't use it
@@ -127,9 +156,9 @@ class SystemUtility():
                 print(f"{stdOutput}\n{stdError}".strip())
             return stdOutput, stdError, process.returncode
         except FileNotFoundError as E:
-            return None, str(E), 1    # Return 1 as exit status for command not found
+            return None, str(E), 1      # Return 1 as exit status for command not found
         except KeyboardInterrupt:
-            return None, None, 130  # Return 130 as exit status for Ctrl+C
+            return None, None, 130      # Return 130 as exit status for Ctrl+C
 
 
     # Downloads a file from a URL and saves it locally
