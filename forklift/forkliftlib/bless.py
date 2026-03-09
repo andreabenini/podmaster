@@ -610,7 +610,9 @@ class _editBox():
         if not Width:
             Width = Size+4 if Size+4<self.__screen.cols else self.__screen.cols
         if not Height:
-            Height = 2+((Size+4) // Width)+(1 if Size%Width>0 else 0)
+            # We want to fit Size characters. Each line has Width-2 characters.
+            innerWidth = Width - 2 if Width > 2 else 1
+            Height = 2 + (Size + innerWidth - 1) // innerWidth
         if not X:
             X = (self.__screen.cols-Width)  // 2 + 1
         if not Y:
@@ -701,6 +703,9 @@ class _editBox():
                 xCursor = self.__XStart+(posCursor - i*self.__Width)
                 if clear:
                     self.__screen.text(Text=" "*(self.__Width-xCursor+self.__XStart), X=xCursor, Y=yCursor, Color=self.__Colors)
+        if not xCursor:
+            yCursor = self.__YStart + self.__Height - 1
+            xCursor = self.__XStart + self.__Width - 1
         return (xCursor, yCursor)
     
     # Current value of the edit field
